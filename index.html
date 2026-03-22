@@ -403,7 +403,7 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
   <!-- HOME -->
   <div class="page" id="homePage">
     <div class="home-hero">
-      <div class="home-hero-text"><h2>Hello, <span class="hi" id="greetNm"></span> 👋</h2><p>Pick a month to plan your study sessions</p></div>
+      <div class="home-hero-text"><h2>Hello, <span class="hi" id="greetNm"></span> 👋</h2><p>Select an academic year and month to plan</p></div>
       <div class="stats-row">
         <div class="stat-card p"><span class="stat-val" id="statP">0%</span><span class="stat-lbl">Physics</span></div>
         <div class="stat-card c"><span class="stat-val" id="statC">0%</span><span class="stat-lbl">Chemistry</span></div>
@@ -411,7 +411,15 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
       </div>
     </div>
     <div class="section-wrap">
-      <div class="section-label">2026 — Select a month</div>
+      <!-- Academic Year Selector -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div class="section-label" style="margin-bottom:0" id="ayLabel">Academic Year 2026–27</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button onclick="changeAY(-1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">‹</button>
+          <select id="aySelect" onchange="jumpToAY(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;outline:none;cursor:pointer;"></select>
+          <button onclick="changeAY(1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">›</button>
+        </div>
+      </div>
       <div class="month-grid" id="monthGrid"></div>
     </div>
   </div>
@@ -564,14 +572,47 @@ const SYLLABUS = {
 };
 
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-const MONTH_DAYS=[31,28,31,30,31,30,31,31,30,31,30,31];
 const DAY_NAMES=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const HOURS=Array.from({length:24},(_,i)=>i===0?'12 AM':i<12?i+' AM':i===12?'12 PM':(i-12)+' PM');
+
+// Academic year = April (year) to March (year+1)
+// e.g. AY 2026 = April 2026 – March 2027
+const AY_START = 2026;
+const AY_END   = 2080;
+
+// Academic year months in order: Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar
+const AY_MONTHS = [3,4,5,6,7,8,9,10,11,0,1,2]; // 0=Jan, 3=Apr
+
+function isLeapYear(y){ return (y%4===0&&y%100!==0)||y%400===0; }
+
+function daysInMonth(month, year){
+  // month: 0-indexed JS month
+  const days=[31,28,31,30,31,30,31,31,30,31,30,31];
+  if(month===1) return isLeapYear(year)?29:28;
+  return days[month];
+}
+
+function getCalYear(ayYear, monthIdx){
+  // monthIdx 0-8 = Apr-Dec of ayYear, 9-11 = Jan-Mar of ayYear+1
+  return monthIdx < 9 ? ayYear : ayYear+1;
+}
+
+function ayLabel(ayYear){ return `${ayYear}–${String(ayYear+1).slice(2)}`; }
+
+// Day key format: AY_YEAR-MONTH(1-12)-DAY  e.g. "2026-4-15" = 15 April 2026
+function makeDayKey(ayYear, ayMonthIdx, day){
+  const calYear = getCalYear(ayYear, ayMonthIdx);
+  const calMonth = AY_MONTHS[ayMonthIdx]+1; // 1-indexed
+  return `${calYear}-${calMonth}-${day}`;
+}
 
 let currentUser=null;
 let cache={sessions:{},completed:{}};
 let syncTimer=null;
-let curMonth=null,curDay=null,curSub='physics';
+let curAY=AY_START; // current academic year
+let curMonth=null;  // index 0-11 in AY_MONTHS
+let curDay=null;
+let curSub='physics';
 let navStack=[];
 let unitExp={},topicExp={};
 
@@ -766,6 +807,12 @@ async function enterApp(){
   document.getElementById('authPage').classList.remove('active');
   document.getElementById('loadingOverlay').style.display='none';
   document.getElementById('appShell').style.display='block';
+  // Set current academic year based on today's date
+  const now=new Date();
+  const mo=now.getMonth(); // 0=Jan
+  curAY = mo>=3 ? now.getFullYear() : now.getFullYear()-1; // April+ = new AY
+  if(curAY<AY_START)curAY=AY_START;
+  if(curAY>AY_END)curAY=AY_END;
   // Avatar: Google picture or initials
   const av = document.getElementById('userAv');
   if(currentUser.picture) {
@@ -790,8 +837,14 @@ function updateBackBtn(){document.getElementById('backBtn').classList.toggle('sh
 function updateBC(){
   const el=document.getElementById('bcEl');
   let parts=[];
-  if(navStack.length>=1&&curMonth!==null) parts.push(`<span class="bc-item" onclick="showHome()">${MONTHS[curMonth]}</span>`);
-  if(navStack.length>=2&&curDay!==null) parts.push(`<span class="bc-sep">›</span><span class="bc-item" onclick="showDays(curMonth)">${curDay} ${MONTHS[curMonth]}</span>`);
+  if(navStack.length>=1&&curMonth!==null){
+    const mn=MONTHS[AY_MONTHS[curMonth]];
+    parts.push(`<span class="bc-item" onclick="showHome()">${ayLabel(curAY)}</span>`);
+    parts.push(`<span class="bc-sep">›</span><span class="bc-item" onclick="showDays(curMonth)">${mn}</span>`);
+  }
+  if(navStack.length>=2&&curDay!==null){
+    parts.push(`<span class="bc-sep">›</span><span class="bc-item">${curDay}</span>`);
+  }
   el.innerHTML=parts.join('');
 }
 function goBack(){
@@ -805,21 +858,65 @@ function setNavActive(id){document.querySelectorAll('.nav-btn').forEach(b=>b.cla
 
 function showHome(back=false){
   if(!back)navStack=[];
-  setNavActive('navHome');renderMonthGrid();updateStats();showPage('homePage');updateBackBtn();updateBC();
+  setNavActive('navHome');
+  populateAYSelect();
+  renderMonthGrid();
+  updateStats();
+  showPage('homePage');
+  updateBackBtn();updateBC();
 }
 function showSyllabus(){navStack=[];setNavActive('navSyl');unitExp={};topicExp={};renderSyllabus(curSub);showPage('sylPage');updateBackBtn();updateBC();}
 function showAdmin(){navStack=[];setNavActive('navAdmin');loadAdminData();showPage('adminPage');updateBackBtn();updateBC();}
 
+// ACADEMIC YEAR CONTROLS
+function populateAYSelect(){
+  const sel=document.getElementById('aySelect');
+  if(!sel)return;
+  sel.innerHTML='';
+  for(let y=AY_START;y<=AY_END;y++){
+    const o=document.createElement('option');
+    o.value=y; o.textContent=`AY ${ayLabel(y)}`;
+    if(y===curAY)o.selected=true;
+    sel.appendChild(o);
+  }
+}
+
+function changeAY(dir){
+  const next=curAY+dir;
+  if(next<AY_START||next>AY_END)return;
+  curAY=next;
+  populateAYSelect();
+  renderMonthGrid();
+  document.getElementById('ayLabel').textContent=`Academic Year ${ayLabel(curAY)} · Apr–Mar`;
+}
+
+function jumpToAY(val){
+  curAY=parseInt(val);
+  renderMonthGrid();
+  document.getElementById('ayLabel').textContent=`Academic Year ${ayLabel(curAY)} · Apr–Mar`;
+}
+
 // MONTH GRID
 function renderMonthGrid(){
   const grid=document.getElementById('monthGrid');grid.innerHTML='';
-  MONTHS.forEach((m,i)=>{
-    const dayKeys=Object.keys(cache.sessions).filter(k=>k.startsWith(`${i+1}-`));
-    const days=MONTH_DAYS[i];
-    const dots=Array.from({length:Math.min(days,21)},(_,d)=>`<div class="mdot${dayKeys.some(k=>k===`${i+1}-${d+1}`)?' on':''}"></div>`).join('');
+  document.getElementById('ayLabel').textContent=`Academic Year ${ayLabel(curAY)} · Apr–Mar`;
+  AY_MONTHS.forEach((calMo, ayMoIdx)=>{
+    const calYear=getCalYear(curAY,ayMoIdx);
+    const mName=MONTHS[calMo];
+    const days=daysInMonth(calMo,calYear);
+    // Check if any sessions exist for this month
+    const hasSessions=Array.from({length:days},(_,d)=>makeDayKey(curAY,ayMoIdx,d+1)).some(k=>cache.sessions[k]&&cache.sessions[k].length>0);
+    const dots=Array.from({length:Math.min(days,21)},(_,d)=>{
+      const k=makeDayKey(curAY,ayMoIdx,d+1);
+      return `<div class="mdot${cache.sessions[k]&&cache.sessions[k].length?' on':''}"></div>`;
+    }).join('');
     const card=document.createElement('div');card.className='month-card';
-    card.innerHTML=`<div class="mcs"></div><span class="month-nm">${m}</span><span class="month-info">2026 · ${days} days</span><div class="month-dots">${dots}</div>`;
-    card.onclick=()=>showDays(i);grid.appendChild(card);
+    card.innerHTML=`<div class="mcs"></div>
+      <span class="month-nm">${mName}</span>
+      <span class="month-info">${calYear} · ${days} days</span>
+      <div class="month-dots">${dots}</div>`;
+    card.onclick=()=>showDays(ayMoIdx);
+    grid.appendChild(card);
   });
 }
 
@@ -831,43 +928,52 @@ function updateStats(){
 }
 
 // DAY GRID
-function showDays(mi,back=false){
+function showDays(ayMoIdx,back=false){
   if(!back)navStack.push('home');
-  curMonth=mi;document.getElementById('daysTitle').textContent=`${MONTHS[mi]} 2026`;
-  renderDayGrid(mi);showPage('daysPage');updateBackBtn();updateBC();
+  curMonth=ayMoIdx;
+  const calYear=getCalYear(curAY,ayMoIdx);
+  const mName=MONTHS[AY_MONTHS[ayMoIdx]];
+  document.getElementById('daysTitle').textContent=`${mName} ${calYear}`;
+  renderDayGrid(ayMoIdx);showPage('daysPage');updateBackBtn();updateBC();
 }
 
-function renderDayGrid(mi){
+function renderDayGrid(ayMoIdx){
   const hdr=document.getElementById('dayHdrRow'),grid=document.getElementById('dayGrid');
   hdr.innerHTML='';grid.innerHTML='';
   DAY_NAMES.forEach(d=>{const c=document.createElement('div');c.className='dh-cell';c.textContent=d;hdr.appendChild(c);});
-  const firstDay=new Date(2026,mi,1).getDay();
+  const calMo=AY_MONTHS[ayMoIdx];
+  const calYear=getCalYear(curAY,ayMoIdx);
+  const days=daysInMonth(calMo,calYear);
+  const firstDay=new Date(calYear,calMo,1).getDay();
   for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='day-cell empty';grid.appendChild(e);}
   const today=new Date();
-  for(let d=1;d<=MONTH_DAYS[mi];d++){
+  for(let d=1;d<=days;d++){
     const cell=document.createElement('div');cell.className='day-cell';
-    const isToday=today.getFullYear()===2026&&today.getMonth()===mi&&today.getDate()===d;
+    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMo&&today.getDate()===d;
     if(isToday)cell.classList.add('today');
-    const dayKey=`${mi+1}-${d}`;
+    const dayKey=makeDayKey(curAY,ayMoIdx,d);
     const sessions=cache.sessions[dayKey]||[];
     const numEl=document.createElement('span');numEl.className='day-num';numEl.textContent=d;cell.appendChild(numEl);
     [...new Set(sessions.map(s=>s.subject))].slice(0,3).forEach(sub=>{
       const pill=document.createElement('span');pill.className=`dpill ${sub}`;pill.textContent=sub.charAt(0).toUpperCase()+sub.slice(1);cell.appendChild(pill);
     });
-    cell.onclick=()=>showTimetable(mi,d);grid.appendChild(cell);
+    cell.onclick=()=>showTimetable(ayMoIdx,d);grid.appendChild(cell);
   }
 }
 
 // TIMETABLE
-function showTimetable(mi,day,back=false){
+function showTimetable(ayMoIdx,day,back=false){
   if(!back)navStack.push('days');
-  curMonth=mi;curDay=day;
-  document.getElementById('ttTitle').textContent=`${day} ${MONTHS[mi]} 2026`;
-  renderTimetable(mi,day);showPage('ttPage');updateBackBtn();updateBC();
+  curMonth=ayMoIdx;curDay=day;
+  const calYear=getCalYear(curAY,ayMoIdx);
+  const mName=MONTHS[AY_MONTHS[ayMoIdx]];
+  document.getElementById('ttTitle').textContent=`${day} ${mName} ${calYear}`;
+  renderTimetable(ayMoIdx,day);showPage('ttPage');updateBackBtn();updateBC();
 }
 
-function renderTimetable(mi,day){
-  const dayKey=`${mi+1}-${day}`,sessions=cache.sessions[dayKey]||[];
+function renderTimetable(ayMoIdx,day){
+  const dayKey=makeDayKey(curAY,ayMoIdx,day);
+  const sessions=cache.sessions[dayKey]||[];
   const wrap=document.getElementById('ttWrap');wrap.innerHTML='';
   for(let h=0;h<24;h++){
     const s=sessions.find(x=>x.startHour<=h&&x.endHour>h);
@@ -926,7 +1032,7 @@ function saveSession(){
   const eH=parseInt(document.getElementById('mEnd').value);
   if(!sub){alert('Please select a subject!');return;}
   if(eH<=sH){alert('End time must be after start time!');return;}
-  const dayKey=`${curMonth+1}-${curDay}`;
+  const dayKey=makeDayKey(curAY,curMonth,curDay);
   if(!cache.sessions[dayKey])cache.sessions[dayKey]=[];
   cache.sessions[dayKey]=cache.sessions[dayKey].filter(s=>s.endHour<=sH||s.startHour>=eH);
   cache.sessions[dayKey].push({subject:sub,topic,startHour:sH,endHour:eH});
