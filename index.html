@@ -586,11 +586,15 @@ function setSyncState(s){
 async function loadData(){
   setSyncState('loading');
   try{
-    const r=await fetch(`${GS}?action=readData&email=${encodeURIComponent(currentUser.email)}`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000); // 6 second timeout
+    const r=await fetch(`${GS}?action=readData&email=${encodeURIComponent(currentUser.email)}`, {signal: controller.signal});
+    clearTimeout(timeout);
     const j=await r.json();
     if(j.success&&j.data){cache.sessions=j.data.sessions||{};cache.completed=j.data.completed||{};}
     setSyncState('synced');
   }catch(e){
+    // Fallback to localStorage instantly
     cache.sessions=JSON.parse(localStorage.getItem('np_s_'+currentUser.email)||'{}');
     cache.completed=JSON.parse(localStorage.getItem('np_c_'+currentUser.email)||'{}');
     setSyncState('error');
@@ -669,10 +673,13 @@ async function handleGoogleResponse(response) {
 }
 
 async function handleGoogleProfile(email, name, picture) {
-  document.getElementById('loadingOverlay').style.display='flex';
+  // Show a small status instead of full loading overlay
+  setSyncState('loading');
   try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 8000);
     // Try login first
-    const loginRes = await fetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}`);
+    const loginRes = await fetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}`, {signal: controller.signal});
     const loginJ = await loginRes.json();
     if(loginJ.success) {
       currentUser = {email: loginJ.email, name: loginJ.name, role: loginJ.role, picture};
@@ -688,12 +695,12 @@ async function handleGoogleProfile(email, name, picture) {
       sessionStorage.setItem('np_user', JSON.stringify(currentUser));
       await enterApp();
     } else {
-      document.getElementById('loadingOverlay').style.display='none';
+      setSyncState('error');
       alert('Google Sign-In failed: ' + (signupJ.message||'Please try again.'));
     }
   } catch(e) {
-    document.getElementById('loadingOverlay').style.display='none';
-    alert('Connection error. Please try again.');
+    setSyncState('error');
+    alert('Connection error. Please check your internet and try again.');
   }
 }
 
@@ -757,6 +764,7 @@ function doLogout(){
 // APP ENTRY
 async function enterApp(){
   document.getElementById('authPage').classList.remove('active');
+  document.getElementById('loadingOverlay').style.display='none';
   document.getElementById('appShell').style.display='block';
   // Avatar: Google picture or initials
   const av = document.getElementById('userAv');
@@ -768,8 +776,12 @@ async function enterApp(){
   document.getElementById('userNm').textContent=currentUser.name;
   document.getElementById('greetNm').textContent=currentUser.name.split(' ')[0];
   document.getElementById('navAdmin').style.display=currentUser.role==='admin'?'flex':'none';
-  await loadData();
+  // Show home immediately with cached data, then sync in background
+  cache.sessions=JSON.parse(localStorage.getItem('np_s_'+currentUser.email)||'{}');
+  cache.completed=JSON.parse(localStorage.getItem('np_c_'+currentUser.email)||'{}');
   showHome();
+  // Load fresh data from Sheets in background
+  loadData().then(()=>{ renderMonthGrid(); updateStats(); });
 }
 
 // NAVIGATION
@@ -1021,12 +1033,14 @@ window.addEventListener('DOMContentLoaded',async()=>{
     try{
       currentUser=JSON.parse(saved);
       await enterApp();
-    }catch(e){sessionStorage.removeItem('np_user');}
-  }
-  document.getElementById('loadingOverlay').style.display='none';
-  if(!currentUser){
+    }catch(e){
+      sessionStorage.removeItem('np_user');
+      document.getElementById('loadingOverlay').style.display='none';
+      document.getElementById('authPage').classList.add('active');
+    }
+  } else {
+    document.getElementById('loadingOverlay').style.display='none';
     document.getElementById('authPage').classList.add('active');
-    // Init Google Sign-In after GSI script loads
     setTimeout(()=>{
       if(typeof google!=='undefined'){
         google.accounts.id.initialize({
