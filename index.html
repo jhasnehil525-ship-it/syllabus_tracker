@@ -191,8 +191,99 @@ body{font-family:"Outfit",sans-serif;background:var(--bg);color:var(--tx);min-he
 .pfill.physics{background:var(--phy)}.pfill.chemistry{background:var(--che)}.pfill.biology{background:var(--bio)}
 .pval{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--mu);width:28px}
 .jdate{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu)}
-@media(max-width:700px){.auth-grid{grid-template-columns:1fr}.auth-left{display:none}.auth-right{padding:36px 28px}.mgrid{grid-template-columns:repeat(3,1fr)}.topbar{padding:0 14px}.swrap,.dgw,.ttwrap,.sylwrap,.awrap{padding-left:14px;padding-right:14px}.dgh,.tthdr,.sylhdr,.ahdr{padding-left:14px;padding-right:14px}.hhero{padding:28px 14px 20px}.utbl th:nth-child(5),.utbl td:nth-child(5){display:none}}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+/* ── TEST PORTAL ── */
+.test-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.test-card:hover{border-color:var(--gd);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.1)}
+.test-card-stripe{position:absolute;top:0;left:0;right:0;height:3px}
+.test-card-badge{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.62rem;padding:3px 8px;border-radius:4px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.test-card-title{font-family:"Syne",sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px}
+.test-card-meta{font-size:.78rem;color:var(--tx2);display:flex;gap:12px;flex-wrap:wrap}
+.test-card-meta span{display:flex;align-items:center;gap:4px}
+.aits-timer{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--gd);background:var(--gdd);border:1px solid rgba(245,158,11,.3);padding:4px 10px;border-radius:6px}
+.aits-locked{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--mu);background:var(--sf2);border:1px solid var(--bd);padding:4px 10px;border-radius:6px}
+/* Test Builder */
+.tbuild-wrap{max-width:700px;margin:0 auto;padding:0 28px 100px}
+.tbuild-section{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.tbuild-section-title{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+.chip-grid{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--tx2);cursor:pointer;font-size:.78rem;transition:all .18s;font-family:"Outfit",sans-serif}
+.chip:hover{border-color:var(--bd2)}
+.chip.sel-phy{background:var(--phyd);border-color:rgba(96,165,250,.4);color:var(--phy)}
+.chip.sel-che{background:var(--ched);border-color:rgba(251,146,60,.4);color:var(--che)}
+.chip.sel-bio{background:var(--biod);border-color:rgba(74,222,128,.4);color:var(--bio)}
+.chip.sel-gold{background:var(--gdd);border-color:rgba(245,158,11,.4);color:var(--gd)}
+.generate-btn{width:100%;background:var(--gd);border:none;color:#000;padding:14px;border-radius:10px;font-family:"Syne",sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
+.generate-btn:hover{background:var(--gdl)}.generate-btn:disabled{opacity:.5;cursor:not-allowed}
+/* Test Screen */
+.test-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);overflow-y:auto;display:none}
+.test-screen.active{display:block}
+.test-topbar{position:sticky;top:0;background:rgba(6,8,15,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:10}
+.test-title{font-family:"Syne",sans-serif;font-size:1rem;font-weight:700}
+.test-timer{font-family:"JetBrains Mono",monospace;font-size:1.1rem;font-weight:700;color:var(--gd);background:var(--gdd);border:1px solid rgba(245,158,11,.3);padding:6px 16px;border-radius:8px}
+.test-timer.urgent{color:var(--rd);background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3)}
+.test-score-bar{display:flex;gap:16px;font-family:"JetBrains Mono",monospace;font-size:.75rem}
+.test-score-bar .correct{color:var(--gn)}.test-score-bar .wrong{color:var(--rd)}.test-score-bar .skip{color:var(--mu)}
+.test-body{max-width:900px;margin:0 auto;padding:24px}
+.qcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.qnum{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.qtext{font-size:.95rem;line-height:1.7;margin-bottom:18px;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--bd);cursor:pointer;transition:all .18s;font-size:.88rem}
+.opt:hover{border-color:var(--bd2);background:var(--sf2)}
+.opt.selected{border-color:var(--gd);background:var(--gdd)}
+.opt.correct{border-color:var(--gn);background:rgba(74,222,128,.1)!important}
+.opt.wrong{border-color:var(--rd);background:rgba(248,113,113,.1)!important}
+.opt-label{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-family:"JetBrains Mono",monospace;font-size:.75rem;font-weight:700;flex-shrink:0;transition:all .18s}
+.opt.selected .opt-label{background:var(--gd);border-color:var(--gd);color:#000}
+.opt.correct .opt-label{background:var(--gn);border-color:var(--gn);color:#000}
+.opt.wrong .opt-label{background:var(--rd);border-color:var(--rd);color:#000}
+.qnav{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0}
+.qnav-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:.75rem;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.qnav-btn:hover{border-color:var(--bd2)}
+.qnav-btn.ans{background:var(--gdd);border-color:rgba(245,158,11,.4);color:var(--gd)}
+.qnav-btn.current{border-color:var(--gd);background:var(--gd);color:#000}
+.submit-test-btn{width:100%;background:var(--gd);border:none;color:#000;padding:14px;border-radius:10px;font-family:"Syne",sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:16px}
+.submit-test-btn:hover{background:var(--gdl)}
+/* Result Screen */
+.result-screen{position:fixed;inset:0;z-index:1001;background:var(--bg);overflow-y:auto;display:none}
+.result-screen.active{display:block}
+.result-hero{text-align:center;padding:48px 24px 32px;background:linear-gradient(180deg,var(--sf),var(--bg))}
+.result-score{font-family:"Syne",sans-serif;font-size:4rem;font-weight:800;color:var(--gd);line-height:1}
+.result-total{font-family:"JetBrains Mono",monospace;font-size:.9rem;color:var(--mu);margin-top:8px}
+.result-stats{display:flex;justify-content:center;gap:24px;margin-top:24px;flex-wrap:wrap}
+.rstat{text-align:center}
+.rstat-val{font-family:"Syne",sans-serif;font-size:1.6rem;font-weight:800;display:block}
+.rstat-lbl{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.result-body{max-width:900px;margin:0 auto;padding:24px 24px 100px}
+.qreview{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.qreview.correct-q{border-color:rgba(74,222,128,.3)}
+.qreview.wrong-q{border-color:rgba(248,113,113,.3)}
+.qreview.skip-q{border-color:var(--bd)}
+.qreview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.qreview-badge{font-family:"JetBrains Mono",monospace;font-size:.65rem;padding:3px 8px;border-radius:4px;font-weight:600}
+.qreview-badge.c{background:rgba(74,222,128,.15);color:var(--gn)}
+.qreview-badge.w{background:rgba(248,113,113,.15);color:var(--rd)}
+.qreview-badge.s{background:var(--sf2);color:var(--mu)}
+.qreview-score{font-family:"JetBrains Mono",monospace;font-size:.8rem}
+.explanation{margin-top:14px;padding:12px 14px;background:var(--sf2);border-radius:8px;border-left:3px solid var(--gd);font-size:.82rem;color:var(--tx2);line-height:1.6}
+.leaderboard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:20px}
+.lb-title{font-family:"Syne",sans-serif;font-size:1rem;font-weight:700;margin-bottom:16px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:"JetBrains Mono",monospace;font-size:.8rem;font-weight:700;width:28px;text-align:center}
+.lb-rank.gold{color:var(--gd)}.lb-rank.silver{color:#94a3b8}.lb-rank.bronze{color:#cd7c3e}
+.lb-name{flex:1;font-size:.88rem;font-weight:600}
+.lb-you{font-family:"JetBrains Mono",monospace;font-size:.6rem;color:var(--gd);background:var(--gdd);padding:2px 6px;border-radius:4px;margin-left:6px}
+.lb-score{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--tx2)}
+/* Loading overlay for tests */
+.test-loading{position:fixed;inset:0;z-index:2000;background:rgba(6,8,15,.95);display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.test-loading.active{display:flex}
+.test-loading-title{font-family:"Syne",sans-serif;font-size:1.5rem;font-weight:800;color:var(--gdl)}
+.test-loading-sub{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--mu);letter-spacing:1px;text-transform:uppercase}
+.tl-bar{width:240px;height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.tl-fill{height:100%;background:var(--gd);border-radius:2px;animation:tlfill 2s ease-in-out infinite}
+@keyframes tlfill{0%{width:0;margin-left:0}50%{width:70%}100%{width:0;margin-left:100%}}
+@media(max-width:600px){.test-topbar{flex-wrap:wrap;gap:8px}.test-score-bar{display:none}}
 </style>
 </head>
 <body>
@@ -338,7 +429,131 @@ body{font-family:"Outfit",sans-serif;background:var(--bg);color:var(--tx);min-he
   <div class="bnav">
     <button class="nbtn active" id="navHome" onclick="showHome()"><span class="ni">&#128197;</span>Planner</button>
     <button class="nbtn" id="navSyl" onclick="showSyllabus()"><span class="ni">&#128218;</span>Syllabus</button>
+    <button class="nbtn" id="navTest" onclick="showTestPortal()"><span class="ni">&#9999;</span>Tests</button>
     <button class="nbtn" id="navAdmin" onclick="showAdmin()" style="display:none"><span class="ni">&#128737;</span>Admin</button>
+  </div>
+
+  <!-- TEST PORTAL PAGE -->
+  <div class="page" id="testPortalPage">
+    <div class="dgh"><div class="ptitle">Test Portal</div></div>
+    <div style="max-width:900px;margin:0 auto;padding:0 28px 100px">
+
+      <!-- Custom Test Section -->
+      <div style="margin-bottom:32px">
+        <div class="slbl" style="margin-bottom:16px">&#9997; Custom Test — Build Your Own</div>
+        <div class="test-card" onclick="showCustomBuilder()">
+          <div class="test-card-stripe" style="background:linear-gradient(90deg,var(--phy),var(--che),var(--bio))"></div>
+          <div class="test-card-badge" style="background:var(--gdd);color:var(--gd);border:1px solid rgba(245,158,11,.3)">Custom</div>
+          <div class="test-card-title">Build Your Own Test</div>
+          <div class="test-card-meta">
+            <span>&#9889; Choose any class, subject, chapters or topics</span>
+            <span>&#128203; 30 Questions</span>
+            <span>&#9201; 45 mins</span>
+            <span>&#10133;4 / &#10134;1 marking</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AITS Section -->
+      <div>
+        <div class="slbl" style="margin-bottom:8px">&#127758; All India Test Series (AITS)</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--mu);margin-bottom:16px">Opens daily 7:00 PM – 9:00 PM IST · 60 questions · 2 hours · Rank among all students</div>
+
+        <!-- Class Selector for AITS -->
+        <div class="clsrow" style="margin-bottom:20px">
+          <span class="clslbl">Class</span>
+          <button class="clsbtn active" id="aitsBtn12" onclick="switchAITSClass('class12')">Class 12</button>
+          <button class="clsbtn" id="aitsBtn11" onclick="switchAITSClass('class11')">Class 11</button>
+          <button class="clsbtn" id="aitsBtnAll" onclick="switchAITSClass('all')">Class 11 + 12</button>
+        </div>
+
+        <div id="aitsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM TEST BUILDER PAGE -->
+  <div class="page" id="customBuilderPage">
+    <div class="dgh"><div class="ptitle">Custom Test Builder</div></div>
+    <div class="tbuild-wrap">
+      <div class="tbuild-section">
+        <div class="tbuild-section-title">1. Select Class</div>
+        <div class="chip-grid">
+          <div class="chip sel-gold" id="cbCls12" onclick="selectCBClass('class12')">Class 12</div>
+          <div class="chip" id="cbCls11" onclick="selectCBClass('class11')">Class 11</div>
+        </div>
+      </div>
+      <div class="tbuild-section">
+        <div class="tbuild-section-title">2. Select Subjects</div>
+        <div class="chip-grid">
+          <div class="chip sel-phy" id="cbPhy" onclick="toggleCBSubject('physics')">&#9889; Physics</div>
+          <div class="chip sel-che" id="cbChe" onclick="toggleCBSubject('chemistry')">&#129514; Chemistry</div>
+          <div class="chip sel-bio" id="cbBio" onclick="toggleCBSubject('biology')">&#127807; Biology</div>
+        </div>
+      </div>
+      <div class="tbuild-section">
+        <div class="tbuild-section-title">3. Select Chapters / Topics <span style="color:var(--mu);font-size:.65rem">(leave empty = all chapters)</span></div>
+        <div id="cbChapterArea"></div>
+      </div>
+      <div class="tbuild-section" style="background:var(--sf2)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div class="tbuild-section-title" style="margin-bottom:0">Test Summary</div>
+          <div id="cbSummary" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--tx2)">30 questions · 45 mins</div>
+        </div>
+        <div style="font-size:.8rem;color:var(--mu)">&#10133;4 marks correct &nbsp;&#10134;1 mark wrong &nbsp;&#9679; 0 marks skipped</div>
+      </div>
+      <button class="generate-btn" id="generateBtn" onclick="startCustomTest()">&#9889; Generate Test with AI</button>
+    </div>
+  </div>
+
+</div><!-- end appShell -->
+
+<!-- TEST LOADING OVERLAY -->
+<div class="test-loading" id="testLoading">
+  <div class="test-loading-title">&#129504; Generating Questions</div>
+  <div class="tl-bar"><div class="tl-fill"></div></div>
+  <div class="test-loading-sub" id="testLoadingMsg">Claude AI is crafting NEET-level questions...</div>
+</div>
+
+<!-- TEST SCREEN (full screen) -->
+<div class="test-screen" id="testScreen">
+  <div class="test-topbar">
+    <div class="test-title" id="testScreenTitle">Custom Test</div>
+    <div class="test-score-bar">
+      <span class="correct" id="tsCorrect">&#10003; 0</span>
+      <span class="wrong" id="tsWrong">&#10007; 0</span>
+      <span class="skip" id="tsSkip">&#9675; 30</span>
+    </div>
+    <div class="test-timer" id="testTimer">45:00</div>
+  </div>
+  <div class="test-body">
+    <div class="qnav" id="qNav"></div>
+    <div id="questionsContainer"></div>
+    <button class="submit-test-btn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN (full screen) -->
+<div class="result-screen" id="resultScreen">
+  <div class="result-hero">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--mu);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px">Test Complete</div>
+    <div class="result-score" id="resultScore">120</div>
+    <div class="result-total" id="resultTotal">out of 120 · 30 questions</div>
+    <div class="result-stats">
+      <div class="rstat"><span class="rstat-val" id="rCorrect" style="color:var(--gn)">0</span><span class="rstat-lbl">Correct</span></div>
+      <div class="rstat"><span class="rstat-val" id="rWrong" style="color:var(--rd)">0</span><span class="rstat-lbl">Wrong</span></div>
+      <div class="rstat"><span class="rstat-val" id="rSkip" style="color:var(--mu)">0</span><span class="rstat-lbl">Skipped</span></div>
+      <div class="rstat"><span class="rstat-val" id="rTime" style="color:var(--gd)">0m</span><span class="rstat-lbl">Time Taken</span></div>
+    </div>
+  </div>
+  <div class="result-body">
+    <div class="leaderboard" id="leaderboardSection" style="display:none">
+      <div class="lb-title">&#127942; Leaderboard</div>
+      <div id="leaderboardList"></div>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:16px">Answer Review</div>
+    <div id="reviewContainer"></div>
+    <button onclick="exitResult()" style="width:100%;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:13px;border-radius:10px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:8px">&#8592; Back to Test Portal</button>
   </div>
 </div>
 
@@ -992,6 +1207,631 @@ async function loadAdmin(){
       body.appendChild(tr);
     });
   }catch(e){body.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--rd);padding:24px">Failed to load. Check connection.</td></tr>'}
+}
+
+// ══════════════════════════════════════════
+// TEST PORTAL
+// ══════════════════════════════════════════
+
+// AITS chapter schedule (2 chapters per test per subject)
+function getAITSTests(cls) {
+  const tests = [];
+  const subs = ['physics','chemistry','biology'];
+  const syllabus = SYLLABUS[cls];
+
+  // Get all chapters per subject
+  const allChs = {};
+  subs.forEach(sub => {
+    allChs[sub] = [];
+    syllabus[sub].forEach(unit => unit.ch.forEach(ch => allChs[sub].push(ch.n)));
+  });
+
+  // Pair tests: 2 chapters per subject
+  const maxTests = Math.max(...subs.map(s => Math.ceil(allChs[s].length / 2)));
+
+  for (let i = 0; i < maxTests; i++) {
+    const chapters = {};
+    subs.forEach(sub => {
+      const start = i * 2;
+      chapters[sub] = allChs[sub].slice(start, start + 2).filter(Boolean);
+    });
+    const hasChapters = subs.some(s => chapters[s].length > 0);
+    if (!hasChapters) break;
+    tests.push({
+      id: cls + '_test_' + (i + 1),
+      label: 'Test ' + (i + 1),
+      desc: subs.map(s => chapters[s].slice(0,1).join('')).join(' · ').substring(0,60) + '...',
+      chapters
+    });
+  }
+
+  // Add full syllabus test
+  const fullChs = {};
+  subs.forEach(sub => { fullChs[sub] = allChs[sub]; });
+  tests.push({
+    id: cls + '_full',
+    label: 'Full Syllabus Test',
+    desc: 'Complete ' + (cls === 'class12' ? 'Class 12' : 'Class 11') + ' syllabus — all chapters',
+    chapters: fullChs,
+    isFull: true
+  });
+
+  return tests;
+}
+
+function getAITSTestsCombined() {
+  const subs = ['physics','chemistry','biology'];
+  const tests12 = getAITSTests('class12');
+  const tests11 = getAITSTests('class11');
+
+  // Full combined test
+  const allChs = {};
+  subs.forEach(sub => {
+    allChs[sub] = [
+      ...SYLLABUS['class11'][sub].flatMap(u => u.ch.map(c => c.n)),
+      ...SYLLABUS['class12'][sub].flatMap(u => u.ch.map(c => c.n))
+    ];
+  });
+
+  return [{
+    id: 'combined_full',
+    label: 'Grand Combined Test',
+    desc: 'Full Class 11 + Class 12 syllabus — ALL subjects',
+    chapters: allChs,
+    isFull: true,
+    isGrand: true
+  }];
+}
+
+let curAITSClass = 'class12';
+
+function switchAITSClass(cls) {
+  curAITSClass = cls;
+  ['aitsBtn12','aitsBtn11','aitsBtnAll'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  if (cls === 'class12') document.getElementById('aitsBtn12').classList.add('active');
+  else if (cls === 'class11') document.getElementById('aitsBtn11').classList.add('active');
+  else document.getElementById('aitsBtnAll').classList.add('active');
+  renderAITSGrid();
+}
+
+function isAITSOpen() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const totalMins = h * 60 + m;
+  return totalMins >= 19 * 60 && totalMins < 21 * 60; // 7PM to 9PM
+}
+
+function getAITSCountdown() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const totalSecs = h * 3600 + m * 60 + s;
+  const openSec = 19 * 3600;
+  if (totalSecs < openSec) {
+    const diff = openSec - totalSecs;
+    const hh = Math.floor(diff / 3600), mm = Math.floor((diff % 3600) / 60), ss = diff % 60;
+    return 'Opens in ' + hh + 'h ' + String(mm).padStart(2,'0') + 'm ' + String(ss).padStart(2,'0') + 's';
+  }
+  return null;
+}
+
+function renderAITSGrid() {
+  const grid = document.getElementById('aitsGrid');
+  grid.innerHTML = '';
+
+  let tests = [];
+  if (curAITSClass === 'class12') tests = getAITSTests('class12');
+  else if (curAITSClass === 'class11') tests = getAITSTests('class11');
+  else tests = getAITSTestsCombined();
+
+  const open = isAITSOpen();
+  const countdown = getAITSCountdown();
+
+  // Color per class
+  const colors = { class12: 'var(--phy)', class11: 'var(--bio)', all: 'var(--che)' };
+  const color = colors[curAITSClass] || 'var(--gd)';
+
+  tests.forEach(test => {
+    const card = document.createElement('div');
+    card.className = 'test-card';
+    card.style.marginBottom = '12px';
+
+    const badge = test.isGrand ? 'Grand' : test.isFull ? 'Full Syllabus' : 'Chapter Test';
+    const badgeBg = test.isGrand ? 'rgba(245,158,11,.15)' : 'rgba(96,165,250,.12)';
+    const badgeColor = test.isGrand ? 'var(--gd)' : color;
+
+    const timerHtml = open
+      ? '<span class="aits-timer">&#9679; OPEN NOW</span>'
+      : '<span class="aits-locked">' + (countdown || 'Closed') + '</span>';
+
+    card.innerHTML = '<div class="test-card-stripe" style="background:' + color + '"></div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">' +
+        '<div class="test-card-badge" style="background:' + badgeBg + ';color:' + badgeColor + ';border:1px solid ' + badgeColor + '33">' + badge + '</div>' +
+        timerHtml +
+      '</div>' +
+      '<div class="test-card-title">' + test.label + '</div>' +
+      '<div class="test-card-meta" style="margin-bottom:10px">' +
+        '<span>&#128203; 60 questions</span><span>&#9201; 2 hours</span><span>&#10133;4 / &#10134;1 marking</span><span>&#127942; Live Ranking</span>' +
+      '</div>' +
+      '<div style="font-size:.75rem;color:var(--mu);font-family:JetBrains Mono,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + test.desc + '</div>';
+
+    if (open) {
+      card.onclick = () => startAITSTest(test);
+    } else {
+      card.style.opacity = '0.65';
+      card.style.cursor = 'default';
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+// Live countdown update
+let aitsCountdownInterval = null;
+
+function showTestPortal() {
+  navStack = [];
+  setNav('navTest');
+  showPage('testPortalPage');
+  renderAITSGrid();
+  updBack(); updBC();
+  // Update countdown every second
+  if (aitsCountdownInterval) clearInterval(aitsCountdownInterval);
+  aitsCountdownInterval = setInterval(() => {
+    if (document.getElementById('testPortalPage').classList.contains('active')) renderAITSGrid();
+  }, 1000);
+}
+
+// ── CUSTOM TEST BUILDER ──────────────────────────────────────
+
+let cbClass = 'class12';
+let cbSubjects = { physics: true, chemistry: true, biology: true };
+let cbSelectedChapters = {}; // { physics: [chname,...], chemistry:[], biology:[] }
+let cbSelectedTopics = {};   // { physics: {chname: [topic,...]}, ... }
+
+function showCustomBuilder() {
+  navStack.push('test');
+  setNav('navTest');
+  cbClass = curCls;
+  cbSubjects = { physics: true, chemistry: true, biology: true };
+  cbSelectedChapters = {};
+  cbSelectedTopics = {};
+
+  // Sync class buttons
+  document.getElementById('cbCls12').className = 'chip ' + (cbClass === 'class12' ? 'sel-gold' : '');
+  document.getElementById('cbCls11').className = 'chip ' + (cbClass === 'class11' ? 'sel-gold' : '');
+
+  renderCBChapters();
+  showPage('customBuilderPage');
+  updBack(); updBC();
+}
+
+function selectCBClass(cls) {
+  cbClass = cls;
+  cbSelectedChapters = {};
+  cbSelectedTopics = {};
+  document.getElementById('cbCls12').className = 'chip ' + (cls === 'class12' ? 'sel-gold' : '');
+  document.getElementById('cbCls11').className = 'chip ' + (cls === 'class11' ? 'sel-gold' : '');
+  renderCBChapters();
+}
+
+function toggleCBSubject(sub) {
+  cbSubjects[sub] = !cbSubjects[sub];
+  const colors = { physics: 'sel-phy', chemistry: 'sel-che', biology: 'sel-bio' };
+  const ids = { physics: 'cbPhy', chemistry: 'cbChe', biology: 'cbBio' };
+  document.getElementById(ids[sub]).className = 'chip ' + (cbSubjects[sub] ? colors[sub] : '');
+  renderCBChapters();
+}
+
+function renderCBChapters() {
+  const area = document.getElementById('cbChapterArea');
+  area.innerHTML = '';
+  const subs = ['physics','chemistry','biology'].filter(s => cbSubjects[s]);
+  const subColors = { physics: 'sel-phy', chemistry: 'sel-che', biology: 'sel-bio' };
+  const subLabels = { physics: '⚡ Physics', chemistry: '🧪 Chemistry', biology: '🌿 Biology' };
+
+  if (subs.length === 0) {
+    area.innerHTML = '<div style="color:var(--mu);font-size:.82rem;padding:8px 0">Select at least one subject above.</div>';
+    return;
+  }
+
+  subs.forEach(sub => {
+    const syl = SYLLABUS[cbClass][sub];
+    const wrap = document.createElement('div');
+    wrap.style.marginBottom = '16px';
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:.75rem;font-weight:600;color:var(--tx2);margin-bottom:8px';
+    lbl.textContent = subLabels[sub];
+    wrap.appendChild(lbl);
+
+    const chips = document.createElement('div');
+    chips.className = 'chip-grid';
+
+    syl.forEach(unit => {
+      unit.ch.forEach(ch => {
+        const chip = document.createElement('div');
+        const isSel = cbSelectedChapters[sub] && cbSelectedChapters[sub].includes(ch.n);
+        chip.className = 'chip ' + (isSel ? subColors[sub] : '');
+        chip.textContent = ch.n;
+        chip.title = ch.t.join(', ');
+        chip.onclick = () => toggleCBChapter(sub, ch.n, subColors[sub]);
+        chips.appendChild(chip);
+      });
+    });
+    wrap.appendChild(chips);
+    area.appendChild(wrap);
+  });
+}
+
+function toggleCBChapter(sub, chName, colorCls) {
+  if (!cbSelectedChapters[sub]) cbSelectedChapters[sub] = [];
+  const idx = cbSelectedChapters[sub].indexOf(chName);
+  if (idx === -1) cbSelectedChapters[sub].push(chName);
+  else cbSelectedChapters[sub].splice(idx, 1);
+  renderCBChapters();
+}
+
+async function startCustomTest() {
+  const subs = ['physics','chemistry','biology'].filter(s => cbSubjects[s]);
+  if (subs.length === 0) { alert('Please select at least one subject!'); return; }
+
+  // Build topics list per subject
+  const requests = [];
+  const qPerSub = Math.floor(30 / subs.length);
+  const extra = 30 - qPerSub * subs.length;
+
+  subs.forEach((sub, i) => {
+    const count = qPerSub + (i === 0 ? extra : 0);
+    let topics = [];
+    if (cbSelectedChapters[sub] && cbSelectedChapters[sub].length > 0) {
+      // Get topics from selected chapters
+      const syl = SYLLABUS[cbClass][sub];
+      syl.forEach(unit => unit.ch.forEach(ch => {
+        if (cbSelectedChapters[sub].includes(ch.n)) topics = topics.concat(ch.t);
+      }));
+    } else {
+      // All chapters
+      const syl = SYLLABUS[cbClass][sub];
+      syl.forEach(unit => unit.ch.forEach(ch => topics = topics.concat(ch.n)));
+    }
+    requests.push({ sub, topics: topics.slice(0, 20), count, cls: cbClass });
+  });
+
+  showTestLoader('Claude AI is generating ' + 30 + ' NEET-level questions...');
+
+  try {
+    const allQuestions = [];
+    for (const req of requests) {
+      const j = await gsf(GS, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'generateQuestions',
+          topics: req.topics,
+          count: req.count,
+          subject: req.sub,
+          cls: req.cls
+        })
+      });
+      if (!j.success) throw new Error(j.message || 'Failed to generate questions');
+      j.questions.forEach(q => { q.subject = req.sub; allQuestions.push(q); });
+      document.getElementById('testLoadingMsg').textContent = 'Generated ' + allQuestions.length + ' / 30 questions...';
+    }
+
+    hideTestLoader();
+    const testId = 'custom_' + CU.email + '_' + Date.now();
+    launchTest({
+      title: 'Custom Test',
+      testId,
+      questions: allQuestions,
+      durationMins: 45,
+      isAITS: false
+    });
+  } catch(e) {
+    hideTestLoader();
+    alert('Error generating questions: ' + e.message + '\n\nPlease check your internet connection and try again.');
+  }
+}
+
+async function startAITSTest(test) {
+  if (!isAITSOpen()) { alert('AITS is only available from 7:00 PM to 9:00 PM IST.'); return; }
+
+  const subs = ['physics','chemistry','biology'];
+  showTestLoader('Generating 60 NEET-level questions for ' + test.label + '...');
+
+  try {
+    const allQuestions = [];
+    const cls = curAITSClass === 'all' ? 'class12' : curAITSClass;
+
+    for (const sub of subs) {
+      const chapters = test.chapters[sub] || [];
+      let topics = [];
+      if (chapters.length > 0) {
+        const syl = SYLLABUS[cls] || SYLLABUS['class12'];
+        syl[sub].forEach(unit => unit.ch.forEach(ch => {
+          if (chapters.includes(ch.n)) topics = topics.concat(ch.t);
+        }));
+        if (curAITSClass === 'all') {
+          SYLLABUS['class11'][sub].forEach(unit => unit.ch.forEach(ch => {
+            if (chapters.includes(ch.n)) topics = topics.concat(ch.t);
+          }));
+        }
+      }
+      if (topics.length === 0) topics = chapters.slice(0, 15);
+
+      const j = await gsf(GS, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'generateQuestions',
+          topics: topics.slice(0, 20),
+          count: 20,
+          subject: sub,
+          cls: curAITSClass === 'all' ? 'class12' : curAITSClass
+        })
+      });
+      if (!j.success) throw new Error(j.message);
+      j.questions.forEach(q => { q.subject = sub; allQuestions.push(q); });
+      document.getElementById('testLoadingMsg').textContent = 'Generated ' + allQuestions.length + ' / 60 questions...';
+    }
+
+    hideTestLoader();
+    launchTest({
+      title: test.label,
+      testId: test.id + '_' + new Date().toISOString().slice(0,10),
+      questions: allQuestions,
+      durationMins: 120,
+      isAITS: true
+    });
+  } catch(e) {
+    hideTestLoader();
+    alert('Error generating questions: ' + e.message);
+  }
+}
+
+// ── TEST ENGINE ──────────────────────────────────────────────
+
+let activeTest = null;
+let testTimer = null;
+let userAnswers = [];
+let testStartTime = null;
+
+function launchTest(config) {
+  activeTest = config;
+  userAnswers = new Array(config.questions.length).fill(-1);
+  testStartTime = Date.now();
+
+  // Render questions
+  renderTestQuestions();
+  renderQNav();
+
+  // Set timer
+  const totalSecs = config.durationMins * 60;
+  let remaining = totalSecs;
+  updateTimerDisplay(remaining);
+
+  if (testTimer) clearInterval(testTimer);
+  testTimer = setInterval(() => {
+    remaining--;
+    updateTimerDisplay(remaining);
+    if (remaining <= 0) { clearInterval(testTimer); autoSubmit(); }
+    if (remaining <= 300) document.getElementById('testTimer').classList.add('urgent');
+  }, 1000);
+
+  document.getElementById('testScreenTitle').textContent = config.title;
+  document.getElementById('testScreen').classList.add('active');
+  updateScoreBar();
+}
+
+function updateTimerDisplay(secs) {
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  let disp = '';
+  if (h > 0) disp = h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  else disp = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  document.getElementById('testTimer').textContent = disp;
+}
+
+function renderTestQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  activeTest.questions.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.id = 'qcard_' + qi;
+
+    const subColor = { physics: 'var(--phy)', chemistry: 'var(--che)', biology: 'var(--bio)' };
+    const subBg = { physics: 'var(--phyd)', chemistry: 'var(--ched)', biology: 'var(--biod)' };
+    const subLabel = q.subject ? q.subject.charAt(0).toUpperCase() + q.subject.slice(1) : '';
+
+    card.innerHTML = '<div class="qnum">Q' + (qi + 1) + ' of ' + activeTest.questions.length +
+      (subLabel ? ' &nbsp;·&nbsp; <span style="color:' + subColor[q.subject] + ';background:' + subBg[q.subject] + ';padding:2px 8px;border-radius:4px">' + subLabel + '</span>' : '') + '</div>' +
+      '<div class="qtext">' + q.q + '</div>' +
+      '<div class="opts" id="opts_' + qi + '">' +
+        ['A','B','C','D'].map((lbl, oi) =>
+          '<div class="opt" id="opt_' + qi + '_' + oi + '" onclick="selectAnswer(' + qi + ',' + oi + ')">' +
+            '<div class="opt-label">' + lbl + '</div>' +
+            '<div>' + (q.opts[oi] || '') + '</div>' +
+          '</div>'
+        ).join('') +
+      '</div>';
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qi, oi) {
+  userAnswers[qi] = oi;
+  // Update visual
+  for (let i = 0; i < 4; i++) {
+    const opt = document.getElementById('opt_' + qi + '_' + i);
+    if (opt) opt.className = 'opt' + (i === oi ? ' selected' : '');
+  }
+  renderQNav();
+  updateScoreBar();
+}
+
+function renderQNav() {
+  const nav = document.getElementById('qNav');
+  nav.innerHTML = '';
+  activeTest.questions.forEach((_, qi) => {
+    const btn = document.createElement('button');
+    btn.className = 'qnav-btn' + (userAnswers[qi] !== -1 ? ' ans' : '');
+    btn.textContent = qi + 1;
+    btn.onclick = () => {
+      document.getElementById('qcard_' + qi).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    nav.appendChild(btn);
+  });
+}
+
+function updateScoreBar() {
+  const answered = userAnswers.filter(a => a !== -1).length;
+  const skipped = userAnswers.length - answered;
+  document.getElementById('tsCorrect').textContent = '✓ ' + answered;
+  document.getElementById('tsSkip').textContent = '○ ' + skipped;
+}
+
+function confirmSubmit() {
+  const unanswered = userAnswers.filter(a => a === -1).length;
+  if (unanswered > 0) {
+    if (!confirm(unanswered + ' questions unanswered. Submit anyway?')) return;
+  }
+  submitTest();
+}
+
+function autoSubmit() {
+  alert('Time is up! Submitting your test...');
+  submitTest();
+}
+
+async function submitTest() {
+  if (testTimer) { clearInterval(testTimer); testTimer = null; }
+
+  const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
+  const questions = activeTest.questions;
+
+  let score = 0, correct = 0, wrong = 0, skipped = 0;
+  userAnswers.forEach((ans, i) => {
+    if (ans === -1) { skipped++; }
+    else if (ans === questions[i].ans) { score += 4; correct++; }
+    else { score -= 1; wrong++; }
+  });
+
+  const total = questions.length * 4;
+  const mins = Math.floor(timeTaken / 60);
+  const secs = timeTaken % 60;
+
+  // Hide test screen
+  document.getElementById('testScreen').classList.remove('active');
+
+  // Show result
+  document.getElementById('resultScore').textContent = score;
+  document.getElementById('resultTotal').textContent = 'out of ' + total + ' · ' + questions.length + ' questions';
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkip').textContent = skipped;
+  document.getElementById('rTime').textContent = mins + 'm ' + String(secs).padStart(2,'0') + 's';
+
+  // Build review
+  const reviewContainer = document.getElementById('reviewContainer');
+  reviewContainer.innerHTML = '';
+  questions.forEach((q, qi) => {
+    const ua = userAnswers[qi];
+    const isCorrect = ua === q.ans;
+    const isSkip = ua === -1;
+    const pts = isSkip ? 0 : isCorrect ? 4 : -1;
+
+    const card = document.createElement('div');
+    card.className = 'qreview ' + (isSkip ? 'skip-q' : isCorrect ? 'correct-q' : 'wrong-q');
+
+    const subLabel = q.subject ? q.subject.charAt(0).toUpperCase() + q.subject.slice(1) : '';
+    const subColor = { physics: 'var(--phy)', chemistry: 'var(--che)', biology: 'var(--bio)' };
+
+    card.innerHTML =
+      '<div class="qreview-header">' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<span class="qnum" style="margin-bottom:0">Q' + (qi + 1) + '</span>' +
+          (subLabel ? '<span style="font-family:JetBrains Mono,monospace;font-size:.62rem;color:' + subColor[q.subject] + '">' + subLabel + '</span>' : '') +
+          '<span class="qreview-badge ' + (isSkip ? 's' : isCorrect ? 'c' : 'w') + '">' + (isSkip ? 'Skipped' : isCorrect ? 'Correct' : 'Wrong') + '</span>' +
+        '</div>' +
+        '<div class="qreview-score" style="color:' + (pts > 0 ? 'var(--gn)' : pts < 0 ? 'var(--rd)' : 'var(--mu)') + '">' + (pts > 0 ? '+' : '') + pts + ' marks</div>' +
+      '</div>' +
+      '<div style="font-size:.88rem;font-weight:500;margin-bottom:12px">' + q.q + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:6px">' +
+        ['A','B','C','D'].map((lbl, oi) => {
+          let cls2 = 'opt';
+          if (oi === q.ans) cls2 += ' correct';
+          else if (oi === ua && ua !== q.ans) cls2 += ' wrong';
+          return '<div class="' + cls2 + '" style="cursor:default">' +
+            '<div class="opt-label">' + lbl + '</div>' +
+            '<div>' + (q.opts[oi] || '') + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<div class="explanation"><strong>Explanation:</strong> ' + (q.exp || 'No explanation provided.') + '</div>';
+
+    reviewContainer.appendChild(card);
+  });
+
+  document.getElementById('resultScreen').classList.add('active');
+
+  // Save result & load leaderboard for AITS
+  if (activeTest.isAITS) {
+    try {
+      await gsf(GS, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'saveTestResult',
+          email: CU.email,
+          testId: activeTest.testId,
+          score,
+          total,
+          timeTaken
+        })
+      });
+      // Load leaderboard
+      const lb = await gsf(GS + '?action=getLeaderboard&testId=' + encodeURIComponent(activeTest.testId));
+      if (lb.success && lb.results.length > 0) {
+        document.getElementById('leaderboardSection').style.display = 'block';
+        const list = document.getElementById('leaderboardList');
+        list.innerHTML = '';
+        const summary = document.createElement('div');
+        summary.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:.75rem;color:var(--mu);margin-bottom:12px';
+        summary.textContent = lb.total + ' student' + (lb.total > 1 ? 's' : '') + ' attempted this test';
+        list.appendChild(summary);
+
+        lb.results.forEach(r => {
+          const row = document.createElement('div');
+          row.className = 'lb-row';
+          const rankColors = ['gold','silver','bronze'];
+          const isYou = r.email === CU.email;
+          row.innerHTML =
+            '<div class="lb-rank ' + (rankColors[r.rank - 1] || '') + '">' + (r.rank <= 3 ? ['🥇','🥈','🥉'][r.rank-1] : r.rank) + '</div>' +
+            '<div class="lb-name">' + r.name + (isYou ? '<span class="lb-you">YOU</span>' : '') + '</div>' +
+            '<div class="lb-score">' + r.score + ' / ' + r.total + '</div>';
+          if (isYou) row.style.background = 'var(--gdd)';
+          list.appendChild(row);
+        });
+      }
+    } catch(e) { console.warn('Leaderboard error:', e); }
+  }
+}
+
+function exitResult() {
+  document.getElementById('resultScreen').classList.remove('active');
+  document.getElementById('testScreen').classList.remove('active');
+  activeTest = null;
+  userAnswers = [];
+  showTestPortal();
+}
+
+function showTestLoader(msg) {
+  document.getElementById('testLoadingMsg').textContent = msg || 'Generating questions...';
+  document.getElementById('testLoading').classList.add('active');
+}
+
+function hideTestLoader() {
+  document.getElementById('testLoading').classList.remove('active');
 }
 
 // INIT
