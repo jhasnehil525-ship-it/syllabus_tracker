@@ -4,387 +4,244 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEET Planner 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #06080f;
-  --surface: #0d1117;
-  --surface2: #161b27;
-  --surface3: #1e2535;
-  --border: #222840;
-  --border2: #2d3550;
-  --text: #e2e8f8;
-  --text2: #9aa5c4;
-  --muted: #5a6380;
-  --physics: #60a5fa;
-  --physics-dim: rgba(96,165,250,0.12);
-  --chemistry: #fb923c;
-  --chemistry-dim: rgba(251,146,60,0.12);
-  --biology: #4ade80;
-  --biology-dim: rgba(74,222,128,0.12);
-  --gold: #f59e0b;
-  --gold-light: #fcd34d;
-  --gold-dim: rgba(245,158,11,0.1);
-  --red: #f87171;
-  --green: #4ade80;
-  --radius: 14px;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
-body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:9998; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); opacity:0.5; }
-
-.page { display:none; min-height:100vh; }
-.page.active { display:block; animation:pageIn 0.3s ease; }
-@keyframes pageIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-
-/* AUTH */
-#authPage { display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; position:relative; overflow:hidden; }
-#authPage.active { display:flex; }
-.auth-bg { position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 600px 400px at 20% 50%,rgba(96,165,250,0.05) 0%,transparent 70%),radial-gradient(ellipse 400px 500px at 80% 30%,rgba(245,158,11,0.06) 0%,transparent 70%),radial-gradient(ellipse 500px 300px at 60% 80%,rgba(74,222,128,0.04) 0%,transparent 70%); }
-.auth-grid { display:grid; grid-template-columns:1fr 1fr; width:100%; max-width:960px; min-height:580px; background:var(--surface); border:1px solid var(--border); border-radius:24px; overflow:hidden; box-shadow:0 40px 100px rgba(0,0,0,0.5); position:relative; z-index:1; }
-.auth-left { background:linear-gradient(135deg,#0d1117 0%,#111827 100%); padding:56px 48px; display:flex; flex-direction:column; justify-content:space-between; border-right:1px solid var(--border); position:relative; overflow:hidden; }
-.auth-left::before { content:''; position:absolute; top:-100px; left:-100px; width:350px; height:350px; background:radial-gradient(circle,rgba(245,158,11,0.08) 0%,transparent 70%); pointer-events:none; }
-.brand-name { font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:800; color:var(--gold-light); letter-spacing:-0.5px; }
-.brand-tag { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-top:6px; }
-.auth-hero { position:relative; z-index:1; }
-.auth-hero h1 { font-family:'Syne',sans-serif; font-size:2.4rem; font-weight:800; line-height:1.15; margin-bottom:16px; }
-.auth-hero h1 span { color:var(--gold); }
-.auth-hero p { color:var(--text2); font-size:0.92rem; line-height:1.7; }
-.subject-pills { display:flex; gap:8px; flex-wrap:wrap; margin-top:20px; }
-.s-pill { padding:5px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; font-family:'JetBrains Mono',monospace; }
-.s-pill.p { background:var(--physics-dim); color:var(--physics); border:1px solid rgba(96,165,250,0.2); }
-.s-pill.c { background:var(--chemistry-dim); color:var(--chemistry); border:1px solid rgba(251,146,60,0.2); }
-.s-pill.b { background:var(--biology-dim); color:var(--biology); border:1px solid rgba(74,222,128,0.2); }
-.auth-right { padding:48px 44px; display:flex; flex-direction:column; justify-content:center; }
-.auth-tabs { display:flex; background:var(--surface2); border-radius:10px; padding:4px; margin-bottom:32px; }
-.auth-tab { flex:1; padding:9px; border:none; background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:600; cursor:pointer; border-radius:8px; transition:all 0.2s; }
-.auth-tab.active { background:var(--surface3); color:var(--text); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
-.auth-form { display:none; }
-.auth-form.active { display:block; animation:pageIn 0.25s ease; }
-.form-title { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:700; margin-bottom:6px; }
-.form-subtitle { color:var(--text2); font-size:0.85rem; margin-bottom:28px; }
-.fgroup { margin-bottom:16px; }
-.flabel { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:7px; }
-.finput { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:11px 14px; border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.9rem; outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
-.finput:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(245,158,11,0.08); }
-.finput.err { border-color:var(--red); }
-.pw-wrap { position:relative; }
-.pw-eye { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); cursor:pointer; font-size:0.9rem; padding:4px; transition:color 0.2s; }
-.pw-eye:hover { color:var(--text); }
-.auth-btn { width:100%; background:var(--gold); border:none; color:#000; padding:13px; border-radius:10px; font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:8px; }
-.auth-btn:hover { background:var(--gold-light); transform:translateY(-1px); box-shadow:0 8px 24px rgba(245,158,11,0.2); }
-.auth-btn:active { transform:translateY(0); }
-.auth-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-.auth-err { display:none; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); color:var(--red); font-size:0.8rem; padding:10px 14px; border-radius:8px; margin-bottom:14px; font-family:'JetBrains Mono',monospace; }
-.auth-err.show { display:block; }
-.auth-ok { display:none; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); color:var(--green); font-size:0.8rem; padding:10px 14px; border-radius:8px; margin-bottom:14px; font-family:'JetBrains Mono',monospace; }
-.auth-ok.show { display:block; }
-
-/* TOPBAR */
-.topbar { position:sticky; top:0; z-index:200; background:rgba(6,8,15,0.9); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 28px; height:56px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
-.topbar-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; color:var(--gold-light); }
-.topbar-center { display:flex; align-items:center; gap:6px; }
-.bc-item { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--muted); cursor:pointer; transition:color 0.15s; }
-.bc-item:hover { color:var(--text); }
-.bc-sep { color:var(--border2); font-size:0.7rem; }
-.topbar-right { display:flex; align-items:center; gap:12px; }
-.sync-badge { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); display:flex; align-items:center; gap:5px; }
-.sync-dot { width:6px; height:6px; border-radius:50%; background:var(--muted); transition:background 0.3s; }
-.sync-dot.synced { background:var(--green); }
-.sync-dot.saving { background:var(--gold); animation:pulse 1s infinite; }
-.sync-dot.error { background:var(--red); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.user-badge { display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border); padding:6px 12px 6px 8px; border-radius:20px; }
-.user-avatar { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--chemistry)); display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; color:#000; font-family:'Syne',sans-serif; }
-.user-name { font-size:0.8rem; font-weight:600; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.logout-btn { background:none; border:none; color:var(--muted); font-size:0.75rem; cursor:pointer; font-family:'Outfit',sans-serif; padding:4px 8px; border-radius:6px; transition:all 0.2s; }
-.logout-btn:hover { color:var(--red); background:rgba(248,113,113,0.08); }
-.back-btn { display:none; align-items:center; gap:5px; background:var(--surface2); border:1px solid var(--border); color:var(--text2); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-family:'Outfit',sans-serif; transition:all 0.2s; }
-.back-btn:hover { border-color:var(--border2); color:var(--text); }
-.back-btn.show { display:flex; }
-
-/* BOTTOM NAV */
-.bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:200; background:rgba(6,8,15,0.95); backdrop-filter:blur(20px); border-top:1px solid var(--border); display:flex; justify-content:center; gap:4px; padding:10px 20px 16px; }
-.nav-btn { display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 28px; border:none; background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.7rem; font-weight:500; cursor:pointer; border-radius:10px; transition:all 0.2s; }
-.nav-btn:hover { background:var(--surface2); color:var(--text); }
-.nav-btn.active { background:var(--surface2); color:var(--gold); }
-.nav-icon { font-size:1.1rem; }
-
-/* HOME */
-.home-hero { padding:48px 28px 32px; max-width:1100px; margin:0 auto; display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; }
-.home-hero-text h2 { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; line-height:1.1; }
-.home-hero-text h2 .hi { color:var(--gold); }
-.home-hero-text p { color:var(--text2); font-size:0.9rem; margin-top:8px; }
-.stats-row { display:flex; gap:12px; flex-wrap:wrap; }
-.stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 20px; min-width:110px; position:relative; overflow:hidden; }
-.stat-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; }
-.stat-card.p::before { background:var(--physics); }
-.stat-card.c::before { background:var(--chemistry); }
-.stat-card.b::before { background:var(--biology); }
-.stat-val { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; line-height:1; display:block; }
-.stat-card.p .stat-val { color:var(--physics); }
-.stat-card.c .stat-val { color:var(--chemistry); }
-.stat-card.b .stat-val { color:var(--biology); }
-.stat-lbl { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px; display:block; }
-.section-wrap { max-width:1100px; margin:0 auto; padding:0 28px 100px; }
-.section-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-bottom:16px; }
-.month-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
-.month-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 16px; cursor:pointer; transition:all 0.22s; position:relative; overflow:hidden; }
-.month-card:hover { border-color:var(--gold); transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,158,11,0.08); }
-.mcs { position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--physics),var(--chemistry),var(--biology)); opacity:0; transition:opacity 0.22s; }
-.month-card:hover .mcs { opacity:1; }
-.month-nm { font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:700; display:block; margin-bottom:3px; }
-.month-info { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); }
-.month-dots { display:flex; gap:3px; flex-wrap:wrap; margin-top:10px; }
-.mdot { width:5px; height:5px; border-radius:50%; background:var(--border2); }
-.mdot.on { background:var(--gold); }
-
-/* DAY GRID */
-.day-grid-header { max-width:1100px; margin:0 auto; padding:28px 28px 20px; }
-.page-title { font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:800; }
-.day-grid-wrap { max-width:1100px; margin:0 auto; padding:0 28px 100px; }
-.day-header-row { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:6px; }
-.dh-cell { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); text-align:center; padding:6px 0; text-transform:uppercase; letter-spacing:1px; }
-.day-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
-.day-cell { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:8px 6px; min-height:60px; cursor:pointer; transition:all 0.18s; }
-.day-cell:hover { border-color:var(--gold); background:var(--surface2); }
-.day-cell.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
-.day-cell.today { border-color:var(--gold); }
-.day-num { font-family:'JetBrains Mono',monospace; font-size:0.78rem; display:block; margin-bottom:4px; }
-.day-cell.today .day-num { background:var(--gold); color:#000; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; margin-bottom:4px; }
-.dpill { display:block; font-size:0.55rem; padding:1px 4px; border-radius:3px; margin-bottom:2px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.dpill.physics { background:var(--physics-dim); color:var(--physics); }
-.dpill.chemistry { background:var(--chemistry-dim); color:var(--chemistry); }
-.dpill.biology { background:var(--biology-dim); color:var(--biology); }
-
-/* TIMETABLE */
-.tt-wrap { max-width:860px; margin:0 auto; padding:0 28px 100px; }
-.tt-header { max-width:860px; margin:0 auto; padding:28px 28px 20px; }
-.tt-sub { color:var(--text2); font-size:0.85rem; margin-top:4px; }
-.hour-row { display:flex; gap:10px; align-items:stretch; margin-bottom:7px; }
-.hour-lbl { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); width:48px; flex-shrink:0; padding-top:14px; text-align:right; }
-.hour-slot { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; min-height:50px; cursor:pointer; transition:all 0.18s; display:flex; align-items:center; justify-content:space-between; }
-.hour-slot:hover { border-color:var(--border2); background:var(--surface2); }
-.hour-slot.has-sub { cursor:default; }
-.hour-slot.physics { background:var(--physics-dim); border-color:rgba(96,165,250,0.25); }
-.hour-slot.chemistry { background:var(--chemistry-dim); border-color:rgba(251,146,60,0.25); }
-.hour-slot.biology { background:var(--biology-dim); border-color:rgba(74,222,128,0.25); }
-.slot-subj { font-size:0.82rem; font-weight:600; }
-.slot-subj.physics { color:var(--physics); }
-.slot-subj.chemistry { color:var(--chemistry); }
-.slot-subj.biology { color:var(--biology); }
-.slot-topic { font-size:0.73rem; color:var(--text2); margin-top:2px; }
-.slot-hint { font-size:0.73rem; color:var(--border2); font-style:italic; }
-.slot-del { background:none; border:1px solid var(--border); color:var(--muted); font-size:0.68rem; padding:3px 8px; border-radius:6px; cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.18s; white-space:nowrap; }
-.slot-del:hover { border-color:var(--red); color:var(--red); }
-
-/* MODAL */
-.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:500; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(6px); }
-.overlay.open { display:flex; }
-.modal { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:32px; width:100%; max-width:500px; max-height:88vh; overflow-y:auto; position:relative; }
-.modal-title { font-family:'Syne',sans-serif; font-size:1.25rem; font-weight:700; margin-bottom:24px; padding-right:36px; }
-.modal-close { position:absolute; top:18px; right:18px; background:none; border:1px solid var(--border); color:var(--muted); width:30px; height:30px; border-radius:8px; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
-.modal-close:hover { border-color:var(--border2); color:var(--text); }
-.mgroup { margin-bottom:16px; }
-.mlabel { display:block; font-family:'JetBrains Mono',monospace; font-size:0.67rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:7px; }
-.mselect { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:10px 14px; border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.88rem; outline:none; transition:border-color 0.2s; appearance:none; }
-.mselect:focus { border-color:var(--gold); }
-.time-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.msave { width:100%; background:var(--gold); border:none; color:#000; padding:12px; border-radius:10px; font-family:'Syne',sans-serif; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:6px; }
-.msave:hover { background:var(--gold-light); }
-
-/* SYLLABUS */
-.syl-wrap { max-width:1000px; margin:0 auto; padding:0 28px 100px; }
-.syl-header { max-width:1000px; margin:0 auto; padding:28px 28px 20px; }
-.sub-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
-.sub-tab { padding:8px 18px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; font-size:0.83rem; font-weight:500; transition:all 0.2s; font-family:'Outfit',sans-serif; }
-.sub-tab.active.physics { background:var(--physics-dim); border-color:rgba(96,165,250,0.4); color:var(--physics); }
-.sub-tab.active.chemistry { background:var(--chemistry-dim); border-color:rgba(251,146,60,0.4); color:var(--chemistry); }
-.sub-tab.active.biology { background:var(--biology-dim); border-color:rgba(74,222,128,0.4); color:var(--biology); }
-.prog-bar-wrap { background:var(--border); border-radius:4px; height:5px; margin-bottom:6px; overflow:hidden; }
-.prog-bar { height:100%; border-radius:4px; transition:width 0.5s ease; }
-.prog-bar.physics { background:var(--physics); }
-.prog-bar.chemistry { background:var(--chemistry); }
-.prog-bar.biology { background:var(--biology); }
-.prog-info { display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); margin-bottom:20px; }
-.unit-block { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
-.unit-hdr { padding:13px 16px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:background 0.15s; user-select:none; }
-.unit-hdr:hover { background:var(--surface2); }
-.unit-hdr-left { display:flex; align-items:center; gap:10px; }
-.unit-hdr-name { font-size:0.88rem; font-weight:600; }
-.unit-cnt { font-family:'JetBrains Mono',monospace; font-size:0.63rem; padding:2px 7px; border-radius:4px; }
-.unit-cnt.physics { background:var(--physics-dim); color:var(--physics); }
-.unit-cnt.chemistry { background:var(--chemistry-dim); color:var(--chemistry); }
-.unit-cnt.biology { background:var(--biology-dim); color:var(--biology); }
-.unit-chev { color:var(--muted); font-size:0.75rem; transition:transform 0.2s; }
-.unit-chev.open { transform:rotate(180deg); }
-.unit-body { display:none; border-top:1px solid var(--border); }
-.unit-body.open { display:block; }
-.ch-item { padding:10px 16px 10px 28px; display:flex; align-items:flex-start; gap:10px; border-bottom:1px solid var(--border); transition:background 0.12s; }
-.ch-item:last-child { border-bottom:none; }
-.ch-item:hover { background:var(--surface2); }
-.ch-check { width:17px; height:17px; border-radius:5px; border:1.5px solid var(--border2); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.18s; margin-top:1px; }
-.ch-check.done.physics { background:var(--physics); border-color:var(--physics); }
-.ch-check.done.chemistry { background:var(--chemistry); border-color:var(--chemistry); }
-.ch-check.done.biology { background:var(--biology); border-color:var(--biology); }
-.ch-check.done::after { content:'✓'; color:#000; font-size:10px; font-weight:700; }
-.ch-info { flex:1; }
-.ch-name { font-size:0.83rem; line-height:1.4; }
-.ch-name.done { text-decoration:line-through; color:var(--muted); }
-.topics-toggle-btn { background:none; border:none; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.67rem; color:var(--muted); text-decoration:underline; margin-top:4px; display:block; transition:color 0.15s; }
-.topics-toggle-btn:hover { color:var(--text); }
-.topics-list { display:none; margin-top:8px; }
-.topics-list.open { display:block; }
-.topic-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid rgba(34,40,64,0.6); }
-.topic-row:last-child { border-bottom:none; }
-.topic-check { width:13px; height:13px; border-radius:3px; border:1.5px solid var(--border2); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
-.topic-check.done.physics { background:var(--physics); border-color:var(--physics); }
-.topic-check.done.chemistry { background:var(--chemistry); border-color:var(--chemistry); }
-.topic-check.done.biology { background:var(--biology); border-color:var(--biology); }
-.topic-check.done::after { content:'✓'; color:#000; font-size:8px; font-weight:700; }
-.topic-name { font-size:0.77rem; color:var(--text2); line-height:1.4; }
-.topic-name.done { text-decoration:line-through; color:var(--muted); opacity:0.6; }
-
-/* ADMIN */
-.admin-wrap { max-width:1100px; margin:0 auto; padding:0 28px 100px; }
-.admin-header { max-width:1100px; margin:0 auto; padding:28px 28px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
-.admin-badge { font-family:'JetBrains Mono',monospace; font-size:0.65rem; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:var(--gold); padding:4px 10px; border-radius:6px; letter-spacing:1px; text-transform:uppercase; }
-.admin-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:28px; }
-.admin-stat { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; }
-.admin-stat-val { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--gold-light); display:block; }
-.admin-stat-lbl { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px; display:block; }
-.users-table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
-.users-table { width:100%; border-collapse:collapse; }
-.users-table th { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; padding:12px 16px; text-align:left; background:var(--surface2); border-bottom:1px solid var(--border); }
-.users-table td { padding:12px 16px; font-size:0.83rem; border-bottom:1px solid var(--border); vertical-align:middle; }
-.users-table tr:last-child td { border-bottom:none; }
-.users-table tr:hover td { background:var(--surface2); }
-.user-row-name { font-weight:600; }
-.user-row-email { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--muted); }
-.prog-mini { display:flex; align-items:center; gap:6px; }
-.prog-mini-bar { width:50px; height:4px; border-radius:2px; background:var(--border); position:relative; overflow:hidden; }
-.prog-mini-fill { position:absolute; left:0; top:0; bottom:0; border-radius:2px; }
-.prog-mini-fill.physics { background:var(--physics); }
-.prog-mini-fill.chemistry { background:var(--chemistry); }
-.prog-mini-fill.biology { background:var(--biology); }
-.prog-mini-val { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); width:28px; }
-.joined-date { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted); }
-
-/* LOADING */
-#loadingOverlay { display:none; position:fixed; inset:0; z-index:9000; background:var(--bg); flex-direction:column; align-items:center; justify-content:center; gap:16px; }
-.loader-logo { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--gold-light); }
-.loader-bar { width:200px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
-.loader-fill { height:100%; background:var(--gold); border-radius:2px; animation:load 1.5s ease-in-out infinite; }
-@keyframes load { 0%{width:0;margin-left:0} 50%{width:60%;margin-left:0} 100%{width:0;margin-left:100%} }
-.loader-text { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
-
-@media(max-width:700px){
-  .auth-grid{grid-template-columns:1fr}
-  .auth-left{display:none}
-  .auth-right{padding:36px 28px}
-  .month-grid{grid-template-columns:repeat(3,1fr)}
-  .topbar{padding:0 14px}
-  .section-wrap,.day-grid-wrap,.tt-wrap,.syl-wrap,.admin-wrap{padding-left:14px;padding-right:14px}
-  .day-grid-header,.tt-header,.syl-header,.admin-header{padding-left:14px;padding-right:14px}
-  .home-hero{padding:28px 14px 20px}
-  .users-table th:nth-child(5),.users-table td:nth-child(5){display:none}
-}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* CLASS SELECTOR BUTTONS */
-.cls-btn { padding:7px 18px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.83rem; font-weight:600; transition:all 0.2s; }
-.cls-btn.active { border-color:var(--gold) !important; background:var(--gold-dim) !important; color:var(--gold) !important; }
-.cls-btn:hover:not(.active) { border-color:var(--border2); color:var(--text2); }
-
-/* GOOGLE BTN */
-.google-btn {
-  width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
-  background:#fff; border:1px solid #e0e0e0; color:#3c4043;
-  padding:11px 16px; border-radius:10px; cursor:pointer;
-  font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:500;
-  transition:all 0.2s; margin-bottom:16px;
-}
-.google-btn:hover { background:#f8f8f8; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
-.google-btn svg { width:18px; height:18px; flex-shrink:0; }
-
-.auth-divider {
-  display:flex; align-items:center; gap:12px; margin-bottom:16px;
-}
-.auth-divider::before, .auth-divider::after {
-  content:''; flex:1; height:1px; background:var(--border);
-}
-.auth-divider span {
-  font-family:'JetBrains Mono',monospace; font-size:0.65rem;
-  color:var(--muted); text-transform:uppercase; letter-spacing:1px; white-space:nowrap;
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#06080f;--sf:#0d1117;--sf2:#161b27;--sf3:#1e2535;--bd:#222840;--bd2:#2d3550;--tx:#e2e8f8;--tx2:#9aa5c4;--mu:#5a6380;--phy:#60a5fa;--phyd:rgba(96,165,250,.12);--che:#fb923c;--ched:rgba(251,146,60,.12);--bio:#4ade80;--biod:rgba(74,222,128,.12);--gd:#f59e0b;--gdl:#fcd34d;--gdd:rgba(245,158,11,.1);--rd:#f87171;--gn:#4ade80;--r:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Outfit",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+.page{display:none;min-height:100vh}.page.active{display:block;animation:pi .3s ease}
+@keyframes pi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#authPage{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+#authPage.active{display:flex}
+.auth-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 600px 400px at 20% 50%,rgba(96,165,250,.05),transparent 70%),radial-gradient(ellipse 400px 500px at 80% 30%,rgba(245,158,11,.06),transparent 70%)}
+.auth-grid{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:960px;min-height:580px;background:var(--sf);border:1px solid var(--bd);border-radius:24px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.5);position:relative;z-index:1}
+.auth-left{background:linear-gradient(135deg,#0d1117,#111827);padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--bd);position:relative;overflow:hidden}
+.auth-left::before{content:"";position:absolute;top:-100px;left:-100px;width:350px;height:350px;background:radial-gradient(circle,rgba(245,158,11,.08),transparent 70%);pointer-events:none}
+.brand{font-family:"Syne",sans-serif;font-size:1.7rem;font-weight:800;color:var(--gdl)}
+.brand-sub{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.ah h1{font-family:"Syne",sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:16px}
+.ah h1 span{color:var(--gd)}.ah p{color:var(--tx2);font-size:.92rem;line-height:1.7}
+.spills{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.sp{padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:600;font-family:"JetBrains Mono",monospace}
+.sp.p{background:var(--phyd);color:var(--phy);border:1px solid rgba(96,165,250,.2)}
+.sp.c{background:var(--ched);color:var(--che);border:1px solid rgba(251,146,60,.2)}
+.sp.b{background:var(--biod);color:var(--bio);border:1px solid rgba(74,222,128,.2)}
+.auth-right{padding:48px 44px;display:flex;flex-direction:column;justify-content:center}
+.atabs{display:flex;background:var(--sf2);border-radius:10px;padding:4px;margin-bottom:32px}
+.atab{flex:1;padding:9px;border:none;background:none;color:var(--mu);font-family:"Outfit",sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border-radius:8px;transition:all .2s}
+.atab.active{background:var(--sf3);color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.afrm{display:none}.afrm.active{display:block;animation:pi .25s ease}
+.ftitle{font-family:"Syne",sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:6px}
+.fsub{color:var(--tx2);font-size:.85rem;margin-bottom:28px}
+.fg{margin-bottom:16px}
+.fl{display:block;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.fi{width:100%;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:11px 14px;border-radius:10px;font-family:"Outfit",sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--gd)}.fi.err{border-color:var(--rd)}
+.pwrap{position:relative}
+.peye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mu);cursor:pointer;font-size:.9rem;padding:4px;transition:color .2s}
+.peye:hover{color:var(--tx)}
+.abtn{width:100%;background:var(--gd);border:none;color:#000;padding:13px;border-radius:10px;font-family:"Syne",sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
+.abtn:hover{background:var(--gdl);transform:translateY(-1px)}.abtn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.aerr{display:none;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--rd);font-size:.8rem;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-family:"JetBrains Mono",monospace}
+.aerr.show{display:block}
+.aok{display:none;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--gn);font-size:.8rem;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-family:"JetBrains Mono",monospace}
+.aok.show{display:block}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:1px solid #e0e0e0;color:#3c4043;padding:11px 16px;border-radius:10px;cursor:pointer;font-family:"Outfit",sans-serif;font-size:.9rem;font-weight:500;transition:all .2s;margin-bottom:16px}
+.gbtn:hover{background:#f8f8f8;box-shadow:0 2px 8px rgba(0,0,0,.15)}.gbtn svg{width:18px;height:18px;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--bd)}
+.divider span{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+.topbar{position:sticky;top:0;z-index:200;background:rgba(6,8,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.tbbrand{font-family:"Syne",sans-serif;font-weight:800;font-size:1.1rem;color:var(--gdl)}
+.tbctr{display:flex;align-items:center;gap:6px}
+.bci{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--mu);cursor:pointer;transition:color .15s}
+.bci:hover{color:var(--tx)}.bcsep{color:var(--bd2);font-size:.7rem}
+.tbrgt{display:flex;align-items:center;gap:12px}
+.sbadge{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--mu);display:flex;align-items:center;gap:5px}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--mu);transition:background .3s}
+.sdot.synced{background:var(--gn)}.sdot.saving{background:var(--gd);animation:pulse 1s infinite}.sdot.error{background:var(--rd)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ubadge{display:flex;align-items:center;gap:8px;background:var(--sf2);border:1px solid var(--bd);padding:6px 12px 6px 8px;border-radius:20px}
+.uav{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--gd),var(--che));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#000;font-family:"Syne",sans-serif}
+.unm{font-size:.8rem;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lout{background:none;border:none;color:var(--mu);font-size:.75rem;cursor:pointer;font-family:"Outfit",sans-serif;padding:4px 8px;border-radius:6px;transition:all .2s}
+.lout:hover{color:var(--rd);background:rgba(248,113,113,.08)}
+.bbtn{display:none;align-items:center;gap:5px;background:var(--sf2);border:1px solid var(--bd);color:var(--tx2);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;font-family:"Outfit",sans-serif;transition:all .2s}
+.bbtn:hover{border-color:var(--bd2);color:var(--tx)}.bbtn.show{display:flex}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(6,8,15,.95);backdrop-filter:blur(20px);border-top:1px solid var(--bd);display:flex;justify-content:center;gap:4px;padding:10px 20px 16px}
+.nbtn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 28px;border:none;background:none;color:var(--mu);font-family:"Outfit",sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;border-radius:10px;transition:all .2s}
+.nbtn:hover{background:var(--sf2);color:var(--tx)}.nbtn.active{background:var(--sf2);color:var(--gd)}.ni{font-size:1.1rem}
+.hhero{padding:48px 28px 32px;max-width:1100px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.hhero h2{font-family:"Syne",sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1}
+.hi{color:var(--gd)}.hhero p{color:var(--tx2);font-size:.9rem;margin-top:8px}
+.srow{display:flex;gap:12px;flex-wrap:wrap}
+.sc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 20px;min-width:110px;position:relative;overflow:hidden}
+.sc::before{content:"";position:absolute;bottom:0;left:0;right:0;height:2px}
+.sc.p::before{background:var(--phy)}.sc.c::before{background:var(--che)}.sc.b::before{background:var(--bio)}
+.sv{font-family:"Syne",sans-serif;font-size:1.6rem;font-weight:800;line-height:1;display:block}
+.sc.p .sv{color:var(--phy)}.sc.c .sv{color:var(--che)}.sc.b .sv{color:var(--bio)}
+.sl{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:4px;display:block}
+.swrap{max-width:1100px;margin:0 auto;padding:0 28px 100px}
+.slbl{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px}
+.clsrow{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.clslbl{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu);text-transform:uppercase;letter-spacing:2px}
+.clsbtn{padding:7px 18px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--mu);cursor:pointer;font-family:"Outfit",sans-serif;font-size:.83rem;font-weight:600;transition:all .2s}
+.clsbtn.active{border-color:var(--gd)!important;background:var(--gdd)!important;color:var(--gd)!important}
+.clsbtn:hover:not(.active){border-color:var(--bd2);color:var(--tx2)}
+.ayrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.aylbl{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
+.ayctrl{display:flex;align-items:center;gap:8px}
+.ayarr{background:var(--sf);border:1px solid var(--bd);color:var(--tx2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ayarr:hover{border-color:var(--gd)}
+.aysel{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 12px;border-radius:8px;font-family:"JetBrains Mono",monospace;font-size:.75rem;outline:none;cursor:pointer}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.mc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px 16px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.mc:hover{border-color:var(--gd);transform:translateY(-2px);box-shadow:0 12px 32px rgba(245,158,11,.08)}
+.mcs{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--phy),var(--che),var(--bio));opacity:0;transition:opacity .22s}
+.mc:hover .mcs{opacity:1}
+.mnm{font-family:"Syne",sans-serif;font-size:1.15rem;font-weight:700;display:block;margin-bottom:3px}
+.minfo{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu)}
+.mdots{display:flex;gap:3px;flex-wrap:wrap;margin-top:10px}
+.mdot{width:5px;height:5px;border-radius:50%;background:var(--bd2)}.mdot.on{background:var(--gd)}
+.dgh{max-width:1100px;margin:0 auto;padding:28px 28px 20px}
+.ptitle{font-family:"Syne",sans-serif;font-size:1.7rem;font-weight:800}
+.dgw{max-width:1100px;margin:0 auto;padding:0 28px 100px}
+.dhr{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.dhc{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);text-align:center;padding:6px 0;text-transform:uppercase;letter-spacing:1px}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:8px 6px;min-height:60px;cursor:pointer;transition:all .18s}
+.dc:hover{border-color:var(--gd);background:var(--sf2)}.dc.empty{background:transparent;border-color:transparent;cursor:default;pointer-events:none}.dc.today{border-color:var(--gd)}
+.dnum{font-family:"JetBrains Mono",monospace;font-size:.78rem;display:block;margin-bottom:4px}
+.dc.today .dnum{background:var(--gd);color:#000;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;margin-bottom:4px}
+.dpill{display:block;font-size:.55rem;padding:1px 4px;border-radius:3px;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dpill.physics{background:var(--phyd);color:var(--phy)}.dpill.chemistry{background:var(--ched);color:var(--che)}.dpill.biology{background:var(--biod);color:var(--bio)}
+.ttwrap{max-width:860px;margin:0 auto;padding:0 28px 100px}
+.tthdr{max-width:860px;margin:0 auto;padding:28px 28px 20px}
+.ttsub{color:var(--tx2);font-size:.85rem;margin-top:4px}
+.hrow{display:flex;gap:10px;align-items:stretch;margin-bottom:7px}
+.hlbl{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--mu);width:48px;flex-shrink:0;padding-top:14px;text-align:right}
+.hslot{flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 14px;min-height:50px;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:space-between}
+.hslot:hover{border-color:var(--bd2);background:var(--sf2)}.hslot.has-sub{cursor:default}
+.hslot.physics{background:var(--phyd);border-color:rgba(96,165,250,.25)}.hslot.chemistry{background:var(--ched);border-color:rgba(251,146,60,.25)}.hslot.biology{background:var(--biod);border-color:rgba(74,222,128,.25)}
+.ssubj{font-size:.82rem;font-weight:600}.ssubj.physics{color:var(--phy)}.ssubj.chemistry{color:var(--che)}.ssubj.biology{color:var(--bio)}
+.stopic{font-size:.73rem;color:var(--tx2);margin-top:2px}.shint{font-size:.73rem;color:var(--bd2);font-style:italic}
+.sdel{background:none;border:1px solid var(--bd);color:var(--mu);font-size:.68rem;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:"Outfit",sans-serif;transition:all .18s;white-space:nowrap}
+.sdel:hover{border-color:var(--rd);color:var(--rd)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.overlay.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:32px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;position:relative}
+.mtitle{font-family:"Syne",sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:24px;padding-right:36px}
+.mclose{position:absolute;top:18px;right:18px;background:none;border:1px solid var(--bd);color:var(--mu);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.mclose:hover{border-color:var(--bd2);color:var(--tx)}
+.mg{margin-bottom:16px}
+.mlbl{display:block;font-family:"JetBrains Mono",monospace;font-size:.67rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.msel{width:100%;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:10px 14px;border-radius:10px;font-family:"Outfit",sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;appearance:none}
+.msel:focus{border-color:var(--gd)}.trow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.msave{width:100%;background:var(--gd);border:none;color:#000;padding:12px;border-radius:10px;font-family:"Syne",sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px}
+.msave:hover{background:var(--gdl)}
+.sylwrap{max-width:1000px;margin:0 auto;padding:0 28px 100px}
+.sylhdr{max-width:1000px;margin:0 auto;padding:28px 28px 20px}
+.stabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.stab{padding:8px 18px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--mu);cursor:pointer;font-size:.83rem;font-weight:500;transition:all .2s;font-family:"Outfit",sans-serif}
+.stab.active.physics{background:var(--phyd);border-color:rgba(96,165,250,.4);color:var(--phy)}.stab.active.chemistry{background:var(--ched);border-color:rgba(251,146,60,.4);color:var(--che)}.stab.active.biology{background:var(--biod);border-color:rgba(74,222,128,.4);color:var(--bio)}
+.pbwrap{background:var(--bd);border-radius:4px;height:5px;margin-bottom:6px;overflow:hidden}
+.pb{height:100%;border-radius:4px;transition:width .5s ease}
+.pb.physics{background:var(--phy)}.pb.chemistry{background:var(--che)}.pb.biology{background:var(--bio)}
+.pinfo{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--mu);margin-bottom:20px}
+.ublock{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.uhdr{padding:13px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .15s;user-select:none}
+.uhdr:hover{background:var(--sf2)}
+.uhl{display:flex;align-items:center;gap:10px}.uhn{font-size:.88rem;font-weight:600}
+.ucnt{font-family:"JetBrains Mono",monospace;font-size:.63rem;padding:2px 7px;border-radius:4px}
+.ucnt.physics{background:var(--phyd);color:var(--phy)}.ucnt.chemistry{background:var(--ched);color:var(--che)}.ucnt.biology{background:var(--biod);color:var(--bio)}
+.uchev{color:var(--mu);font-size:.75rem;transition:transform .2s}.uchev.open{transform:rotate(180deg)}
+.ubody{display:none;border-top:1px solid var(--bd)}.ubody.open{display:block}
+.chitem{padding:10px 16px 10px 28px;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--bd);transition:background .12s}
+.chitem:last-child{border-bottom:none}.chitem:hover{background:var(--sf2)}
+.chk{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--bd2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;margin-top:1px}
+.chk.done.physics{background:var(--phy);border-color:var(--phy)}.chk.done.chemistry{background:var(--che);border-color:var(--che)}.chk.done.biology{background:var(--bio);border-color:var(--bio)}
+.chk.done::after{content:"✓";color:#000;font-size:10px;font-weight:700}
+.chinfo{flex:1}.chnm{font-size:.83rem;line-height:1.4}.chnm.done{text-decoration:line-through;color:var(--mu)}
+.ttbtn{background:none;border:none;cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:.67rem;color:var(--mu);text-decoration:underline;margin-top:4px;display:block;transition:color .15s}
+.ttbtn:hover{color:var(--tx)}
+.tlist{display:none;margin-top:8px}.tlist.open{display:block}
+.trow3{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(34,40,64,.6)}
+.trow3:last-child{border-bottom:none}
+.tchk{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--bd2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.tchk.done.physics{background:var(--phy);border-color:var(--phy)}.tchk.done.chemistry{background:var(--che);border-color:var(--che)}.tchk.done.biology{background:var(--bio);border-color:var(--bio)}
+.tchk.done::after{content:"✓";color:#000;font-size:8px;font-weight:700}
+.tnm{font-size:.77rem;color:var(--tx2);line-height:1.4}.tnm.done{text-decoration:line-through;color:var(--mu);opacity:.6}
+.awrap{max-width:1100px;margin:0 auto;padding:0 28px 100px}
+.ahdr{max-width:1100px;margin:0 auto;padding:28px 28px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.abadge{font-family:"JetBrains Mono",monospace;font-size:.65rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--gd);padding:4px 10px;border-radius:6px;letter-spacing:1px;text-transform:uppercase}
+.astats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.astat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px}
+.asv{font-family:"Syne",sans-serif;font-size:2rem;font-weight:800;color:var(--gdl);display:block}
+.asl{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-top:4px;display:block}
+.utbl-wrap{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.utbl{width:100%;border-collapse:collapse}
+.utbl th{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--mu);text-transform:uppercase;letter-spacing:1px;padding:12px 16px;text-align:left;background:var(--sf2);border-bottom:1px solid var(--bd)}
+.utbl td{padding:12px 16px;font-size:.83rem;border-bottom:1px solid var(--bd);vertical-align:middle}
+.utbl tr:last-child td{border-bottom:none}.utbl tr:hover td{background:var(--sf2)}
+.urnm{font-weight:600}.urem{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--mu)}
+.pmini{display:flex;align-items:center;gap:6px}
+.pbar{width:50px;height:4px;border-radius:2px;background:var(--bd);position:relative;overflow:hidden}
+.pfill{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.pfill.physics{background:var(--phy)}.pfill.chemistry{background:var(--che)}.pfill.biology{background:var(--bio)}
+.pval{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--mu);width:28px}
+.jdate{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--mu)}
+@media(max-width:700px){.auth-grid{grid-template-columns:1fr}.auth-left{display:none}.auth-right{padding:36px 28px}.mgrid{grid-template-columns:repeat(3,1fr)}.topbar{padding:0 14px}.swrap,.dgw,.ttwrap,.sylwrap,.awrap{padding-left:14px;padding-right:14px}.dgh,.tthdr,.sylhdr,.ahdr{padding-left:14px;padding-right:14px}.hhero{padding:28px 14px 20px}.utbl th:nth-child(5),.utbl td:nth-child(5){display:none}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+</style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loadingOverlay" style="display:none">
-  <div class="loader-logo">NEET 2026</div>
-  <div class="loader-bar"><div class="loader-fill"></div></div>
-  <div class="loader-text">Loading planner…</div>
-</div>
-
-<!-- AUTH -->
+<!-- AUTH (shown by default, no loading screen) -->
 <div class="page active" id="authPage">
   <div class="auth-bg"></div>
   <div class="auth-grid">
     <div class="auth-left">
-      <div>
-        <div class="brand-name">NEET Planner 2026</div>
-        <div class="brand-tag">Class XII · Study Platform</div>
-      </div>
-      <div class="auth-hero">
+      <div><div class="brand">NEET Planner 2026</div><div class="brand-sub">Class XI &amp; XII · Study Platform</div></div>
+      <div class="ah">
         <h1>Plan smart.<br><span>Score big.</span></h1>
-        <p>Your personal NEET study companion. Track every chapter, plan every hour, and ace the exam.</p>
-        <div class="subject-pills">
-          <span class="s-pill p">⚡ Physics</span>
-          <span class="s-pill c">🧪 Chemistry</span>
-          <span class="s-pill b">🌿 Biology</span>
-        </div>
+        <p>Your personal NEET study companion. Track every chapter, plan every hour, ace the exam.</p>
+        <div class="spills"><span class="sp p">⚡ Physics</span><span class="sp c">🧪 Chemistry</span><span class="sp b">🌿 Biology</span></div>
       </div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted)">Synced across all devices · Real-time progress</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--mu)">Synced across all devices · Class 11 &amp; 12</div>
     </div>
     <div class="auth-right">
-      <div class="auth-tabs">
-        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
-        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+      <div class="atabs">
+        <button class="atab active" onclick="switchTab('login')">Sign In</button>
+        <button class="atab" onclick="switchTab('signup')">Sign Up</button>
       </div>
-      <!-- LOGIN -->
-      <div class="auth-form active" id="loginForm">
-        <div class="form-title">Welcome back</div>
-        <div class="form-subtitle">Sign in to your study account</div>
-        <div class="auth-err" id="loginErr"></div>
-        <button class="google-btn" onclick="signInWithGoogle()">
-          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      <div class="afrm active" id="loginForm">
+        <div class="ftitle">Welcome back</div>
+        <div class="fsub">Sign in to your study account</div>
+        <div class="aerr" id="loginErr"></div>
+        <button class="gbtn" onclick="signInWithGoogle()">
+          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
           Continue with Google
         </button>
-        <div class="auth-divider"><span>or sign in with email</span></div>
-        <div class="fgroup"><label class="flabel">Email</label><input class="finput" id="loginEmail" type="email" placeholder="your@email.com" autocomplete="username"/></div>
-        <div class="fgroup"><label class="flabel">Password</label><div class="pw-wrap"><input class="finput" id="loginPw" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/><button class="pw-eye" onclick="toggleEye('loginPw')">👁</button></div></div>
-        <button class="auth-btn" id="loginBtn" onclick="doLogin()">Sign In →</button>
+        <div class="divider"><span>or sign in with email</span></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="loginEmail" type="email" placeholder="your@email.com"/></div>
+        <div class="fg"><label class="fl">Password</label><div class="pwrap"><input class="fi" id="loginPw" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/><button class="peye" onclick="toggleEye('loginPw')">👁</button></div></div>
+        <button class="abtn" id="loginBtn" onclick="doLogin()">Sign In →</button>
       </div>
-      <!-- SIGNUP -->
-      <div class="auth-form" id="signupForm">
-        <div class="form-title">Create account</div>
-        <div class="form-subtitle">Join NEET aspirants on this platform</div>
-        <div class="auth-err" id="signupErr"></div>
-        <div class="auth-ok" id="signupOk"></div>
-        <button class="google-btn" onclick="signInWithGoogle()">
-          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      <div class="afrm" id="signupForm">
+        <div class="ftitle">Create account</div>
+        <div class="fsub">Join NEET aspirants on this platform</div>
+        <div class="aerr" id="signupErr"></div>
+        <div class="aok" id="signupOk"></div>
+        <button class="gbtn" onclick="signInWithGoogle()">
+          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
           Sign up with Google
         </button>
-        <div class="auth-divider"><span>or sign up with email</span></div>
-        <div class="fgroup"><label class="flabel">Full Name</label><input class="finput" id="signupName" type="text" placeholder="Your full name"/></div>
-        <div class="fgroup"><label class="flabel">Email</label><input class="finput" id="signupEmail" type="email" placeholder="your@email.com" autocomplete="username"/></div>
-        <div class="fgroup"><label class="flabel">Password</label><div class="pw-wrap"><input class="finput" id="signupPw" type="password" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')doSignup()"/><button class="pw-eye" onclick="toggleEye('signupPw')">👁</button></div></div>
-        <button class="auth-btn" id="signupBtn" onclick="doSignup()">Create Account →</button>
+        <div class="divider"><span>or sign up with email</span></div>
+        <div class="fg"><label class="fl">Full Name</label><input class="fi" id="signupName" type="text" placeholder="Your full name"/></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="signupEmail" type="email" placeholder="your@email.com"/></div>
+        <div class="fg"><label class="fl">Password</label><div class="pwrap"><input class="fi" id="signupPw" type="password" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')doSignup()"/><button class="peye" onclick="toggleEye('signupPw')">👁</button></div></div>
+        <button class="abtn" id="signupBtn" onclick="doSignup()">Create Account →</button>
       </div>
     </div>
   </div>
@@ -394,570 +251,423 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
 <div id="appShell" style="display:none">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <div class="topbar-brand">NEET 2026</div>
-      <button class="back-btn" id="backBtn" onclick="goBack()">← Back</button>
+      <div class="tbbrand">NEET 2026</div>
+      <button class="bbtn" id="backBtn" onclick="goBack()">← Back</button>
     </div>
-    <div class="topbar-center" id="bcEl"></div>
-    <div class="topbar-right">
-      <div class="sync-badge"><div class="sync-dot" id="syncDot"></div><span id="syncTxt">Synced</span></div>
-      <div class="user-badge"><div class="user-avatar" id="userAv"></div><span class="user-name" id="userNm"></span></div>
-      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    <div class="tbctr" id="bcEl"></div>
+    <div class="tbrgt">
+      <div class="sbadge"><div class="sdot" id="sdot"></div><span id="stxt">Synced</span></div>
+      <div class="ubadge"><div class="uav" id="uav"></div><span class="unm" id="unm"></span></div>
+      <button class="lout" onclick="doLogout()">Sign out</button>
     </div>
   </div>
 
   <!-- HOME -->
   <div class="page" id="homePage">
-    <div class="home-hero">
-      <div class="home-hero-text"><h2>Hello, <span class="hi" id="greetNm"></span> 👋</h2><p>Select your class, academic year and month to plan</p></div>
-      <div class="stats-row">
-        <div class="stat-card p"><span class="stat-val" id="statP">0%</span><span class="stat-lbl">Physics</span></div>
-        <div class="stat-card c"><span class="stat-val" id="statC">0%</span><span class="stat-lbl">Chemistry</span></div>
-        <div class="stat-card b"><span class="stat-val" id="statB">0%</span><span class="stat-lbl">Biology</span></div>
+    <div class="hhero">
+      <div><h2>Hello, <span class="hi" id="greetNm"></span> 👋</h2><p>Select class, year and month to plan</p></div>
+      <div class="srow">
+        <div class="sc p"><span class="sv" id="statP">0%</span><span class="sl">Physics</span></div>
+        <div class="sc c"><span class="sv" id="statC">0%</span><span class="sl">Chemistry</span></div>
+        <div class="sc b"><span class="sv" id="statB">0%</span><span class="sl">Biology</span></div>
       </div>
     </div>
-    <div class="section-wrap">
-      <!-- Class Selector -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Class</div>
-        <button id="cls11Btn" class="cls-btn" onclick="switchClass('class11')">Class 11</button>
-        <button id="cls12Btn" class="cls-btn active" onclick="switchClass('class12')">Class 12</button>
+    <div class="swrap">
+      <div class="clsrow">
+        <span class="clslbl">Class</span>
+        <button class="clsbtn" id="btn11" onclick="switchClass('class11')">Class 11</button>
+        <button class="clsbtn active" id="btn12" onclick="switchClass('class12')">Class 12</button>
       </div>
-      <!-- Academic Year Selector -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-        <div class="section-label" style="margin-bottom:0" id="ayLabel">Academic Year 2026–27</div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <button onclick="changeAY(-1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">‹</button>
-          <select id="aySelect" onchange="jumpToAY(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;outline:none;cursor:pointer;"></select>
-          <button onclick="changeAY(1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">›</button>
+      <div class="ayrow">
+        <span class="aylbl" id="ayLbl">Academic Year 2026-27</span>
+        <div class="ayctrl">
+          <button class="ayarr" onclick="changeAY(-1)">&#8249;</button>
+          <select class="aysel" id="aySel" onchange="jumpAY(this.value)"></select>
+          <button class="ayarr" onclick="changeAY(1)">&#8250;</button>
         </div>
       </div>
-      <div class="month-grid" id="monthGrid"></div>
+      <div class="mgrid" id="monthGrid"></div>
     </div>
   </div>
 
   <!-- DAYS -->
   <div class="page" id="daysPage">
-    <div class="day-grid-header"><div class="page-title" id="daysTitle"></div></div>
-    <div class="day-grid-wrap">
-      <div class="day-header-row" id="dayHdrRow"></div>
-      <div class="day-grid" id="dayGrid"></div>
-    </div>
+    <div class="dgh"><div class="ptitle" id="daysTitle"></div></div>
+    <div class="dgw"><div class="dhr" id="dayHdrRow"></div><div class="dgrid" id="dayGrid"></div></div>
   </div>
 
   <!-- TIMETABLE -->
   <div class="page" id="ttPage">
-    <div class="tt-header"><div class="page-title" id="ttTitle"></div><div class="tt-sub">Tap an empty slot to add a study session</div></div>
-    <div class="tt-wrap" id="ttWrap"></div>
+    <div class="tthdr"><div class="ptitle" id="ttTitle"></div><div class="ttsub">Tap a slot to add a study session</div></div>
+    <div class="ttwrap" id="ttWrap"></div>
   </div>
 
   <!-- SYLLABUS -->
   <div class="page" id="sylPage">
-    <div class="syl-header">
-      <div class="page-title">Syllabus Tracker</div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Class</div>
-        <button id="sylCls11Btn" class="cls-btn" onclick="switchClassSyl('class11')">Class 11</button>
-        <button id="sylCls12Btn" class="cls-btn active" onclick="switchClassSyl('class12')">Class 12</button>
+    <div class="sylhdr">
+      <div class="ptitle">Syllabus Tracker</div>
+      <div class="clsrow" style="margin-top:16px">
+        <span class="clslbl">Class</span>
+        <button class="clsbtn" id="sbtn11" onclick="switchClassSyl('class11')">Class 11</button>
+        <button class="clsbtn active" id="sbtn12" onclick="switchClassSyl('class12')">Class 12</button>
       </div>
-      <div class="sub-tabs">
-        <button class="sub-tab active physics" onclick="switchSub('physics')">⚡ Physics</button>
-        <button class="sub-tab chemistry" onclick="switchSub('chemistry')">🧪 Chemistry</button>
-        <button class="sub-tab biology" onclick="switchSub('biology')">🌿 Biology</button>
+      <div class="stabs">
+        <button class="stab active physics" onclick="switchSub('physics')">&#9889; Physics</button>
+        <button class="stab chemistry" onclick="switchSub('chemistry')">&#129514; Chemistry</button>
+        <button class="stab biology" onclick="switchSub('biology')">&#127807; Biology</button>
       </div>
-      <div class="prog-info"><span id="progTxt"></span><span id="progPct"></span></div>
-      <div class="prog-bar-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
+      <div class="pinfo"><span id="progTxt"></span><span id="progPct"></span></div>
+      <div class="pbwrap"><div class="pb" id="progBar" style="width:0%"></div></div>
     </div>
-    <div class="syl-wrap" id="sylWrap"></div>
+    <div class="sylwrap" id="sylWrap"></div>
   </div>
 
   <!-- ADMIN -->
   <div class="page" id="adminPage">
-    <div class="admin-header">
-      <div style="display:flex;align-items:center;gap:12px"><div class="page-title">Admin Panel</div><span class="admin-badge">Snehil Jha</span></div>
-      <button onclick="loadAdminData()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.8rem">↻ Refresh</button>
+    <div class="ahdr">
+      <div style="display:flex;align-items:center;gap:12px"><div class="ptitle">Admin Panel</div><span class="abadge">Snehil Jha</span></div>
+      <button onclick="loadAdmin()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx2);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.8rem">&#8635; Refresh</button>
     </div>
-    <div class="admin-wrap">
-      <div class="admin-stats" id="adminStats"></div>
-      <div class="section-label" style="margin-bottom:12px">Registered Students</div>
-      <div class="users-table-wrap">
-        <table class="users-table">
-          <thead><tr><th>Student</th><th>Physics</th><th>Chemistry</th><th>Biology</th><th>Joined</th></tr></thead>
-          <tbody id="usersBody"></tbody>
-        </table>
-      </div>
+    <div class="awrap">
+      <div class="astats" id="adminStats"></div>
+      <div class="slbl" style="margin-bottom:12px">Registered Students</div>
+      <div class="utbl-wrap"><table class="utbl"><thead><tr><th>Student</th><th>Physics</th><th>Chemistry</th><th>Biology</th><th>Joined</th></tr></thead><tbody id="usersBody"></tbody></table></div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav" id="bottomNav">
-    <button class="nav-btn active" id="navHome" onclick="showHome()"><span class="nav-icon">📅</span>Planner</button>
-    <button class="nav-btn" id="navSyl" onclick="showSyllabus()"><span class="nav-icon">📚</span>Syllabus</button>
-    <button class="nav-btn" id="navAdmin" onclick="showAdmin()" style="display:none"><span class="nav-icon">🛡️</span>Admin</button>
+  <div class="bnav">
+    <button class="nbtn active" id="navHome" onclick="showHome()"><span class="ni">&#128197;</span>Planner</button>
+    <button class="nbtn" id="navSyl" onclick="showSyllabus()"><span class="ni">&#128218;</span>Syllabus</button>
+    <button class="nbtn" id="navAdmin" onclick="showAdmin()" style="display:none"><span class="ni">&#128737;</span>Admin</button>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- SESSION MODAL -->
 <div class="overlay" id="sessionOverlay">
   <div class="modal">
-    <div class="modal-title">Add Study Session</div>
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="mgroup"><label class="mlabel">Subject</label><select class="mselect" id="mSubject" onchange="populateTopics()"><option value="">Select subject…</option><option value="physics">⚡ Physics</option><option value="chemistry">🧪 Chemistry</option><option value="biology">🌿 Biology</option></select></div>
-    <div class="mgroup"><label class="mlabel">Chapter / Topic</label><select class="mselect" id="mTopic"><option value="">Select subject first…</option></select></div>
-    <div class="mgroup"><label class="mlabel">Time</label><div class="time-row"><select class="mselect" id="mStart"></select><select class="mselect" id="mEnd"></select></div></div>
-    <button class="msave" onclick="saveSession()">Save Session ✦</button>
+    <div class="mtitle" id="modalTitle">Add Study Session</div>
+    <button class="mclose" onclick="closeModal()">&#10005;</button>
+    <div class="mg"><label class="mlbl">Subject</label><select class="msel" id="mSubject" onchange="populateTopics()"><option value="">Select subject...</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option></select></div>
+    <div class="mg"><label class="mlbl">Chapter / Topic</label><select class="msel" id="mTopic"><option value="">Select subject first...</option></select></div>
+    <div class="mg"><label class="mlbl">Time</label><div class="trow2"><select class="msel" id="mStart"></select><select class="msel" id="mEnd"></select></div></div>
+    <button class="msave" onclick="saveSession()">Save Session</button>
   </div>
 </div>
 
 <script>
-const GS = 'https://script.google.com/macros/s/AKfycbx6P-iJkrlUVJzLHXKm1AdIyYgnEqcHr0jDFwvBGOAnB7SAj9935kotqoIhtxBz0faT/exec';
-const ADMIN_EMAIL = 'jhasnehil525@gmail.com';
-const ADMIN_PASS  = 'Snehil@admin2026';
+// CONFIG
+const GS='https://script.google.com/macros/s/AKfycbx6P-iJkrlUVJzLHXKm1AdIyYgnEqcHr0jDFwvBGOAnB7SAj9935kotqoIhtxBz0faT/exec';
+const ADMIN_EMAIL='jhasnehil525@gmail.com';
+const ADMIN_PASS='Snehil@admin2026';
+const GOOGLE_CLIENT_ID='41645202040-qb795laoaac2ira9923hp1kaj0nvq025.apps.googleusercontent.com';
 
-const SYLLABUS = {
-  class12: {
-    physics:[
-      {unit:"Unit I – Electrostatics",chapters:[
-        {name:"Ch 1: Electric Charges and Fields",topics:["Electric charges","Conservation of charge","Coulomb's law","Superposition principle","Electric field","Electric field lines","Electric flux","Gauss's theorem","Applications of Gauss's theorem"]},
-        {name:"Ch 2: Electrostatic Potential and Capacitance",topics:["Electric potential","Potential due to point charge","Potential due to dipole","Equipotential surfaces","Relation between field and potential","Potential energy","Conductors and insulators","Dielectrics","Capacitors","Combination of capacitors","Energy in capacitor"]}
-      ]},
-      {unit:"Unit II – Current Electricity",chapters:[
-        {name:"Ch 3: Current Electricity",topics:["Electric current","Drift velocity","Ohm's law","Resistance and resistivity","Temperature dependence","Electrical power","Series and parallel resistors","EMF and internal resistance","Kirchhoff's laws","Wheatstone bridge","Potentiometer"]}
-      ]},
-      {unit:"Unit III – Magnetic Effects",chapters:[
-        {name:"Ch 4: Moving Charges and Magnetism",topics:["Magnetic force","Motion in magnetic field","Biot-Savart law","Circular loop field","Ampere's law","Force between parallel wires","Torque on current loop","Galvanometer"]},
-        {name:"Ch 5: Magnetism and Matter",topics:["Bar magnet","Magnetic field lines","Earth's magnetism","Diamagnetism","Paramagnetism","Ferromagnetism","Electromagnets"]}
-      ]},
-      {unit:"Unit IV – EM Induction & AC",chapters:[
-        {name:"Ch 6: Electromagnetic Induction",topics:["Faraday's laws","Lenz's law","Motional EMF","Self-inductance","Mutual inductance","AC generator"]},
-        {name:"Ch 7: Alternating Current",topics:["AC voltage and current","Phasors","AC through R, L, C","LC oscillations","LCR series circuit","Resonance","Power in AC circuit","Transformers"]}
-      ]},
-      {unit:"Unit V – EM Waves",chapters:[
-        {name:"Ch 8: Electromagnetic Waves",topics:["Displacement current","Maxwell's equations","EM wave properties","EM spectrum","Uses of EM waves"]}
-      ]},
-      {unit:"Unit VI – Optics",chapters:[
-        {name:"Ch 9: Ray Optics",topics:["Reflection at spherical mirrors","Refraction","Total internal reflection","Refraction at spherical surfaces","Lenses","Lens maker's equation","Prism refraction","Scattering","Eye","Microscope","Telescope"]},
-        {name:"Ch 10: Wave Optics",topics:["Wavefront","Huygens principle","Coherent sources","Young's double slit","Interference","Diffraction","Single slit diffraction","Polarisation","Malus's law","Brewster's law"]}
-      ]},
-      {unit:"Unit VII – Dual Nature",chapters:[
-        {name:"Ch 11: Dual Nature of Radiation and Matter",topics:["Photoelectric effect","Einstein's equation","Particle nature of light","de Broglie hypothesis","Davisson-Germer experiment"]}
-      ]},
-      {unit:"Unit VIII – Atoms & Nuclei",chapters:[
-        {name:"Ch 12: Atoms",topics:["Alpha-particle scattering","Rutherford model","Bohr model","Energy levels","Hydrogen spectrum"]},
-        {name:"Ch 13: Nuclei",topics:["Nuclear size","Binding energy","Nuclear force","Radioactivity","Alpha decay","Beta decay","Gamma decay","Nuclear fission","Nuclear fusion"]}
-      ]},
-      {unit:"Unit IX – Electronic Devices",chapters:[
-        {name:"Ch 14: Semiconductor Electronics",topics:["Energy bands","Intrinsic semiconductor","Extrinsic semiconductor","p-n junction","Rectifiers","Zener diode","LED","Solar cell","Transistor","Logic gates"]}
-      ]}
-    ],
-    chemistry:[
-      {unit:"Unit 1 – Solutions",chapters:[{name:"Solutions",topics:["Types of solutions","Concentration expressions","Solubility of gases","Raoult's law","Relative lowering of vapour pressure","Elevation of boiling point","Depression of freezing point","Osmotic pressure","Abnormal molecular mass","Van't Hoff factor"]}]},
-      {unit:"Unit 2 – Electrochemistry",chapters:[{name:"Electrochemistry",topics:["Redox reactions","EMF of a cell","Standard electrode potential","Nernst equation","Gibbs energy and EMF","Conductance","Specific and molar conductivity","Kohlrausch's Law","Electrolysis","Galvanic cells","Lead accumulator","Fuel cells","Corrosion"]}]},
-      {unit:"Unit 3 – Chemical Kinetics",chapters:[{name:"Chemical Kinetics",topics:["Rate of reaction","Factors affecting rate","Order and molecularity","Rate law","Zero order reactions","First order reactions","Half-life","Collision theory","Activation energy","Arrhenius equation"]}]},
-      {unit:"Unit 4 – d and f Block",chapters:[{name:"d and f Block Elements",topics:["Electronic config of transition metals","Properties of transition metals","Oxidation states","Colour of compounds","Catalytic property","Magnetic properties","K₂Cr₂O₇","KMnO₄","Lanthanides","Actinides"]}]},
-      {unit:"Unit 5 – Coordination Compounds",chapters:[{name:"Coordination Compounds",topics:["Ligands and coordination number","IUPAC nomenclature","Werner's theory","Valence Bond Theory","Crystal Field Theory","Colour and magnetic properties","Stereoisomerism"]}]},
-      {unit:"Unit 6 – Haloalkanes & Haloarenes",chapters:[{name:"Haloalkanes and Haloarenes",topics:["Nomenclature","Nature of C–X bond","Physical properties","Chemical properties","Optical rotation","Substitution reactions","Environmental effects"]}]},
-      {unit:"Unit 7 – Alcohols, Phenols & Ethers",chapters:[{name:"Alcohols, Phenols and Ethers",topics:["Nomenclature of alcohols","Preparation of alcohols","Properties of alcohols","Mechanism of dehydration","Nomenclature of phenols","Acidic nature of phenol","Electrophilic substitution","Nomenclature of ethers","Preparation of ethers","Properties of ethers"]}]},
-      {unit:"Unit 8 – Aldehydes, Ketones & Acids",chapters:[{name:"Aldehydes and Ketones",topics:["Nomenclature","Carbonyl group","Preparation","Properties","Nucleophilic addition","Reactivity of alpha hydrogen"]},{name:"Carboxylic Acids",topics:["Nomenclature","Acidic nature","Preparation","Physical properties","Chemical properties"]}]},
-      {unit:"Unit 9 – Amines",chapters:[{name:"Amines",topics:["Nomenclature and classification","Structure","Preparation","Physical and chemical properties","Identification of amines"]},{name:"Diazonium Salts",topics:["Preparation","Chemical reactions","Importance in organic synthesis"]}]},
-      {unit:"Unit 10 – Biomolecules",chapters:[{name:"Biomolecules",topics:["Carbohydrates – classification","Monosaccharides","Oligosaccharides","Polysaccharides","Proteins and amino acids","Peptide bond","Protein structure","Denaturation","Enzymes","Vitamins","Nucleic Acids"]}]}
-    ],
-    biology:[
-      {unit:"Unit VI – Reproduction",chapters:[
-        {name:"Ch 2: Sexual Reproduction in Flowering Plants",topics:["Flower structure","Male gametophyte","Female gametophyte","Types of pollination","Pollination agencies","Out breeding devices","Pollen-pistil interaction","Double fertilization","Endosperm and embryo development","Seed and fruit development","Apomixis","Parthenocarpy","Polyembryony"]},
-        {name:"Ch 3: Human Reproduction",topics:["Male reproductive system","Female reproductive system","Spermatogenesis","Oogenesis","Menstrual cycle","Fertilization","Embryo development","Implantation","Pregnancy and placenta","Parturition","Lactation"]},
-        {name:"Ch 4: Reproductive Health",topics:["Need for reproductive health","STDs and prevention","Birth control methods","Contraception","MTP","Amniocentesis","Infertility","IVF, ZIFT, GIFT"]}
-      ]},
-      {unit:"Unit VII – Genetics & Evolution",chapters:[
-        {name:"Ch 5: Principles of Inheritance and Variation",topics:["Mendelian inheritance","Incomplete dominance","Co-dominance","Multiple alleles and blood groups","Pleiotropy","Polygenic inheritance","Chromosome theory","Sex determination","Linkage and crossing over","Haemophilia","Colour blindness","Thalassemia","Down's syndrome","Turner's syndrome","Klinefelter's syndrome"]},
-        {name:"Ch 6: Molecular Basis of Inheritance",topics:["DNA as genetic material","Structure of DNA","Structure of RNA","DNA packaging","DNA replication","Central Dogma","Transcription","Genetic code","Translation","lac operon","Human genome project","DNA fingerprinting"]},
-        {name:"Ch 7: Evolution",topics:["Origin of life","Evidence for evolution","Darwin's contribution","Modern synthetic theory","Mutation and recombination","Natural selection","Gene flow and genetic drift","Hardy-Weinberg principle","Adaptive radiation","Human evolution"]}
-      ]},
-      {unit:"Unit VIII – Biology & Human Welfare",chapters:[
-        {name:"Ch 8: Human Health and Diseases",topics:["Pathogens and parasites","Malaria","Dengue and Chikungunya","Filariasis","Ascariasis","Typhoid","Pneumonia","Common cold","Amoebiasis","Ringworm","Basic immunology","Vaccines","Cancer","HIV and AIDS","Drug and alcohol abuse"]},
-        {name:"Ch 10: Microbes in Human Welfare",topics:["Microbes in food processing","Industrial production","Sewage treatment","Energy generation","Bio-control agents","Bio-fertilizers","Antibiotics"]}
-      ]},
-      {unit:"Unit IX – Biotechnology",chapters:[
-        {name:"Ch 11: Biotechnology – Principles",topics:["Recombinant DNA technology","Tools of rDNA technology","Processes in rDNA technology"]},
-        {name:"Ch 12: Biotechnology – Applications",topics:["Human insulin production","Vaccine production","Stem cell technology","Gene therapy","GMOs and Bt crops","Transgenic animals","Biosafety issues","Biopiracy and patents"]}
-      ]},
-      {unit:"Unit X – Ecology & Environment",chapters:[
-        {name:"Ch 13: Organisms and Populations",topics:["Mutualism","Competition","Predation","Parasitism","Population attributes","Population growth","Birth and death rate","Age distribution"]},
-        {name:"Ch 14: Ecosystem",topics:["Ecosystem patterns","Components","Productivity","Decomposition","Energy flow","Pyramids of number","Pyramids of biomass","Pyramids of energy"]},
-        {name:"Ch 15: Biodiversity and Conservation",topics:["Biodiversity concept","Patterns of biodiversity","Importance","Loss of biodiversity","Hotspots","Endangered organisms","Extinction","Red Data Book","Biosphere reserves","National parks","Wildlife sanctuaries","Ramsar sites"]}
-      ]}
-    ]
-  },
-  class11: {
-    physics:[
-      {unit:"Unit I – Physical World & Measurement",chapters:[
-        {name:"Ch 1: Units and Measurements",topics:["Need for measurement","Units of measurement","Systems of units","SI units","Fundamental and derived units","Significant figures","Dimensions of physical quantities","Dimensional analysis","Applications of dimensional analysis"]}
-      ]},
-      {unit:"Unit II – Kinematics",chapters:[
-        {name:"Ch 2: Motion in a Straight Line",topics:["Frame of reference","Motion in a straight line","Uniform and non-uniform motion","Instantaneous velocity","Uniformly accelerated motion","Velocity-time graphs","Position-time graphs","Relations for uniformly accelerated motion"]},
-        {name:"Ch 3: Motion in a Plane",topics:["Scalar and vector quantities","Position and displacement vectors","Addition and subtraction of vectors","Unit vector","Resolution of a vector","Rectangular components","Scalar and vector product","Projectile motion","Uniform circular motion"]}
-      ]},
-      {unit:"Unit III – Laws of Motion",chapters:[
-        {name:"Ch 4: Laws of Motion",topics:["Concept of force","Inertia","Newton's first law","Momentum and Newton's second law","Impulse","Newton's third law","Conservation of linear momentum","Equilibrium of concurrent forces","Static and kinetic friction","Laws of friction","Rolling friction","Centripetal force","Circular motion examples"]}
-      ]},
-      {unit:"Unit IV – Work, Energy & Power",chapters:[
-        {name:"Ch 5: Work, Energy and Power",topics:["Work done by constant force","Work done by variable force","Kinetic energy","Work-energy theorem","Power","Potential energy","Spring potential energy","Conservative forces","Motion in a vertical circle","Elastic collisions","Inelastic collisions"]}
-      ]},
-      {unit:"Unit V – Motion of System of Particles",chapters:[
-        {name:"Ch 6: System of Particles and Rotational Motion",topics:["Centre of mass","Momentum conservation","Centre of mass of rigid body","Torque","Angular momentum","Conservation of angular momentum","Equilibrium of rigid bodies","Rotational motion equations","Moment of inertia","Radius of gyration"]}
-      ]},
-      {unit:"Unit VI – Gravitation",chapters:[
-        {name:"Ch 7: Gravitation",topics:["Kepler's laws","Universal law of gravitation","Acceleration due to gravity","Variation with altitude and depth","Gravitational potential energy","Gravitational potential","Escape speed","Orbital velocity of satellite"]}
-      ]},
-      {unit:"Unit VII – Properties of Bulk Matter",chapters:[
-        {name:"Ch 8: Mechanical Properties of Solids",topics:["Elasticity","Stress-strain relationship","Hooke's law","Young's modulus","Bulk modulus","Shear modulus","Poisson's ratio","Elastic energy"]},
-        {name:"Ch 9: Mechanical Properties of Fluids",topics:["Pressure in a fluid column","Pascal's law","Hydraulic lift","Viscosity","Stokes' law","Terminal velocity","Streamlined flow","Turbulent flow","Bernoulli's theorem","Surface tension","Angle of contact","Capillary rise"]},
-        {name:"Ch 10: Thermal Properties of Matter",topics:["Heat and temperature","Thermal expansion of solids","Thermal expansion of liquids","Thermal expansion of gases","Anomalous expansion of water","Specific heat capacity","Calorimetry","Change of state","Latent heat","Heat conduction","Heat convection","Heat radiation","Stefan's law","Wien's law"]}
-      ]},
-      {unit:"Unit VIII – Thermodynamics",chapters:[
-        {name:"Ch 11: Thermodynamics",topics:["Thermal equilibrium","Zeroth law of thermodynamics","Internal energy","First law of thermodynamics","Second law of thermodynamics","Isothermal process","Adiabatic process","Reversible and irreversible processes","Cyclic processes"]}
-      ]},
-      {unit:"Unit IX – Kinetic Theory",chapters:[
-        {name:"Ch 12: Kinetic Theory",topics:["Equation of state of perfect gas","Kinetic theory of gases","Concept of pressure","Kinetic interpretation of temperature","RMS speed","Degrees of freedom","Law of equipartition of energy","Specific heat capacities of gases","Mean free path","Avogadro's number"]}
-      ]},
-      {unit:"Unit X – Oscillations & Waves",chapters:[
-        {name:"Ch 13: Oscillations",topics:["Periodic motion","Period and frequency","Simple harmonic motion","SHM equations","Phase","Oscillations of a spring","Energy in SHM","Simple pendulum"]},
-        {name:"Ch 14: Waves",topics:["Wave motion","Transverse and longitudinal waves","Speed of wave","Displacement relation for progressive wave","Principle of superposition","Reflection of waves","Standing waves in strings","Standing waves in organ pipes","Fundamental mode and harmonics","Beats"]}
-      ]}
-    ],
-    chemistry:[
-      {unit:"Unit I – Some Basic Concepts",chapters:[
-        {name:"Some Basic Concepts of Chemistry",topics:["General introduction to chemistry","Laws of chemical combination","Dalton's atomic theory","Atomic and molecular masses","Mole concept","Molar mass","Chemical reactions","Stoichiometry","Stoichiometric calculations"]}
-      ]},
-      {unit:"Unit II – Structure of Atom",chapters:[
-        {name:"Structure of Atom",topics:["Discovery of subatomic particles","Atomic number","Isotopes and isobars","Thomson model","Rutherford model","Bohr model","Dual nature of matter","de Broglie relation","Heisenberg uncertainty principle","Quantum numbers","Shapes of orbitals","Aufbau principle","Pauli exclusion principle","Hund's rule","Electronic configuration"]}
-      ]},
-      {unit:"Unit III – Classification of Elements",chapters:[
-        {name:"Classification of Elements and Periodicity",topics:["Modern periodic law","Long form of periodic table","Periodic trends in properties","Atomic radii","Ionic radii","Ionisation enthalpy","Electron gain enthalpy","Electronegativity","Valency"]}
-      ]},
-      {unit:"Unit IV – Chemical Bonding",chapters:[
-        {name:"Chemical Bonding and Molecular Structure",topics:["Valence electrons","Ionic bond","Covalent bond","Bond parameters","Lewis structures","VSEPR theory","Hybridization – sp, sp2, sp3","Molecular orbital theory","Bonding and antibonding orbitals","Hydrogen bonding"]}
-      ]},
-      {unit:"Unit V – Chemical Thermodynamics",chapters:[
-        {name:"Chemical Thermodynamics",topics:["Systems and surroundings","Work, heat and energy","State functions","First law of thermodynamics","Internal energy","Enthalpy","Heat capacity","Hess's law","Enthalpy of bond dissociation","Enthalpy of combustion","Enthalpy of formation","Second law – entropy","Third law of thermodynamics"]}
-      ]},
-      {unit:"Unit VI – Equilibrium",chapters:[
-        {name:"Equilibrium",topics:["Physical equilibrium","Chemical equilibrium","Law of mass action","Equilibrium constant Kp and Kc","Le Chatelier's principle","Ionic equilibrium","Strong and weak electrolytes","Degree of ionization","pH","Buffer solutions","Hydrolysis of salts","Solubility product","Common ion effect"]}
-      ]},
-      {unit:"Unit VII – Redox Reactions",chapters:[
-        {name:"Redox Reactions",topics:["Oxidation and reduction","Oxidation number","Balancing redox reactions by oxidation number method","Balancing by half-reaction method"]}
-      ]},
-      {unit:"Unit VIII – Organic Chemistry Basics",chapters:[
-        {name:"Organic Chemistry – Basic Principles and Techniques",topics:["Introduction to organic chemistry","Purification methods","Classification of organic compounds","IUPAC nomenclature","Inductive effect","Electromeric effect","Resonance","Hyperconjugation","Homolytic fission","Heterolytic fission","Free radicals","Carbocations","Carbanions","Electrophiles and nucleophiles","Types of organic reactions"]}
-      ]},
-      {unit:"Unit IX – Hydrocarbons",chapters:[
-        {name:"Hydrocarbons",topics:["Classification of hydrocarbons","Nomenclature","Isomerism","Conformation of alkanes","Physical properties of alkanes","Halogenation of alkanes","Combustion of alkanes","Pyrolysis","Alkenes – structure and preparation","Addition reactions of alkenes","Alkynes – structure and preparation","Addition reactions of alkynes","Benzene – structure","Electrophilic substitution in benzene"]}
-      ]}
-    ],
-    biology:[
-      {unit:"Unit I – Diversity of Living Organisms",chapters:[
-        {name:"Ch 1: The Living World",topics:["Biodiversity","Need for classification","Three domains of life","Taxonomy and systematics","Species concept","Taxonomical hierarchy","Binomial nomenclature"]},
-        {name:"Ch 2: Biological Classification",topics:["Five kingdom classification","Monera – salient features","Protista – salient features","Fungi – salient features","Lichens","Viruses","Viroids"]},
-        {name:"Ch 3: Plant Kingdom",topics:["Classification of plants","Algae – salient features","Bryophyta – salient features","Pteridophyta – salient features","Gymnospermae – salient features","Plant life cycle","Alternation of generations"]},
-        {name:"Ch 4: Animal Kingdom",topics:["Basis of classification","Non-chordates up to phylum level","Chordates up to class level"]}
-      ]},
-      {unit:"Unit II – Structural Organisation",chapters:[
-        {name:"Ch 5: Morphology of Flowering Plants",topics:["Morphology of root","Morphology of stem","Morphology of leaf","Inflorescence","Flower morphology","Fruit","Seed","Description of family Solanaceae"]},
-        {name:"Ch 6: Anatomy of Flowering Plants",topics:["Anatomy of tissue systems","Tissue systems in dicots","Tissue systems in monocots"]},
-        {name:"Ch 7: Structural Organisation in Animals",topics:["Morphology of frog","Digestive system of frog","Circulatory system of frog","Respiratory system of frog","Nervous system of frog","Reproductive system of frog"]}
-      ]},
-      {unit:"Unit III – Cell: Structure and Function",chapters:[
-        {name:"Ch 8: Cell – The Unit of Life",topics:["Cell theory","Prokaryotic cell","Eukaryotic cell","Cell envelope","Cell membrane","Cell wall","Endoplasmic reticulum","Golgi bodies","Lysosomes","Vacuoles","Mitochondria","Ribosomes","Plastids","Microbodies","Cytoskeleton","Cilia and flagella","Centrioles","Nucleus"]},
-        {name:"Ch 9: Biomolecules",topics:["Chemical constituents of living cells","Structure and function of proteins","Carbohydrates","Lipids","Nucleic acids","Enzyme types","Enzyme properties","Enzyme action"]},
-        {name:"Ch 10: Cell Cycle and Cell Division",topics:["Cell cycle","Mitosis – phases","Mitosis – significance","Meiosis – phases","Meiosis – significance"]}
-      ]},
-      {unit:"Unit IV – Plant Physiology",chapters:[
-        {name:"Ch 11: Photosynthesis in Higher Plants",topics:["Autotrophic nutrition","Site of photosynthesis","Photosynthetic pigments","Photochemical phase","Biosynthetic phase","Cyclic photophosphorylation","Non-cyclic photophosphorylation","Chemiosmotic hypothesis","Photorespiration","C3 pathway","C4 pathway","Factors affecting photosynthesis"]},
-        {name:"Ch 12: Respiration in Plants",topics:["Exchange of gases","Glycolysis","Fermentation","TCA cycle","Electron transport system","ATP generation","Amphibolic pathways","Respiratory quotient"]},
-        {name:"Ch 13: Plant Growth and Development",topics:["Seed germination","Phases of plant growth","Plant growth rate","Conditions of growth","Differentiation","Dedifferentiation","Redifferentiation","Auxin","Gibberellin","Cytokinin","Ethylene","ABA"]}
-      ]},
-      {unit:"Unit V – Human Physiology",chapters:[
-        {name:"Ch 14: Breathing and Exchange of Gases",topics:["Respiratory organs in animals","Respiratory system in humans","Mechanism of breathing","Regulation of respiration","Gas exchange","Transport of gases","Respiratory volumes","Asthma","Emphysema","Occupational respiratory disorders"]},
-        {name:"Ch 15: Body Fluids and Circulation",topics:["Composition of blood","Blood groups","Coagulation of blood","Lymph and its function","Structure of human heart","Blood vessels","Cardiac cycle","Cardiac output","ECG","Double circulation","Regulation of cardiac activity","Hypertension","Coronary artery disease","Angina pectoris","Heart failure"]},
-        {name:"Ch 16: Excretory Products and Elimination",topics:["Modes of excretion","Human excretory system","Urine formation","Osmoregulation","Regulation of kidney function","Uremia","Renal failure","Renal calculi","Nephritis","Dialysis","Kidney transplant"]},
-        {name:"Ch 17: Locomotion and Movement",topics:["Types of movement","Skeletal muscle","Contractile proteins","Muscle contraction","Skeletal system","Joints","Myasthenia gravis","Tetany","Muscular dystrophy","Arthritis","Osteoporosis","Gout"]},
-        {name:"Ch 18: Neural Control and Coordination",topics:["Neuron and nerves","Central nervous system","Peripheral nervous system","Visceral nervous system","Generation of nerve impulse","Conduction of nerve impulse"]},
-        {name:"Ch 19: Chemical Coordination and Integration",topics:["Endocrine glands and hormones","Hypothalamus","Pituitary gland","Pineal gland","Thyroid gland","Parathyroid gland","Adrenal gland","Pancreas","Gonads","Mechanism of hormone action","Disorders – dwarfism, acromegaly, cretinism, goiter, diabetes"]}
-      ]}
-    ]
-  }
-};
-    {unit:"Unit II – Current Electricity",chapters:[
-      {name:"Ch 3: Current Electricity",topics:["Electric current","Drift velocity","Ohm's law","Resistance and resistivity","Temperature dependence","Electrical power","Series and parallel resistors","EMF and internal resistance","Kirchhoff's laws","Wheatstone bridge","Potentiometer"]}
+// SYLLABUS DATA
+const S12 = {
+  physics:[
+    {u:"Unit I - Electrostatics",ch:[
+      {n:"Ch 1: Electric Charges and Fields",t:["Electric charges","Conservation of charge","Coulomb's law","Superposition principle","Electric field","Electric field lines","Electric flux","Gauss's theorem","Applications of Gauss's theorem"]},
+      {n:"Ch 2: Electrostatic Potential and Capacitance",t:["Electric potential","Potential due to point charge","Potential due to dipole","Equipotential surfaces","Potential energy","Conductors and insulators","Dielectrics","Capacitors","Combination of capacitors","Energy in capacitor"]}
     ]},
-    {unit:"Unit III – Magnetic Effects",chapters:[
-      {name:"Ch 4: Moving Charges and Magnetism",topics:["Magnetic force","Motion in magnetic field","Biot-Savart law","Circular loop field","Ampere's law","Force between parallel wires","Torque on current loop","Galvanometer"]},
-      {name:"Ch 5: Magnetism and Matter",topics:["Bar magnet","Magnetic field lines","Earth's magnetism","Diamagnetism","Paramagnetism","Ferromagnetism","Electromagnets"]}
+    {u:"Unit II - Current Electricity",ch:[
+      {n:"Ch 3: Current Electricity",t:["Electric current","Drift velocity","Ohm's law","Resistance and resistivity","Temperature dependence","Electrical power","Series and parallel resistors","EMF and internal resistance","Kirchhoff's laws","Wheatstone bridge","Potentiometer"]}
     ]},
-    {unit:"Unit IV – EM Induction & AC",chapters:[
-      {name:"Ch 6: Electromagnetic Induction",topics:["Faraday's laws","Lenz's law","Motional EMF","Self-inductance","Mutual inductance","AC generator"]},
-      {name:"Ch 7: Alternating Current",topics:["AC voltage and current","Phasors","AC through R, L, C","LC oscillations","LCR series circuit","Resonance","Power in AC circuit","Transformers"]}
+    {u:"Unit III - Magnetic Effects",ch:[
+      {n:"Ch 4: Moving Charges and Magnetism",t:["Magnetic force","Motion in magnetic field","Biot-Savart law","Circular loop field","Ampere's law","Force between parallel wires","Torque on current loop","Galvanometer"]},
+      {n:"Ch 5: Magnetism and Matter",t:["Bar magnet","Magnetic field lines","Earth's magnetism","Diamagnetism","Paramagnetism","Ferromagnetism","Electromagnets"]}
     ]},
-    {unit:"Unit V – EM Waves",chapters:[
-      {name:"Ch 8: Electromagnetic Waves",topics:["Displacement current","Maxwell's equations","EM wave properties","EM spectrum","Uses of EM waves"]}
+    {u:"Unit IV - EM Induction and AC",ch:[
+      {n:"Ch 6: Electromagnetic Induction",t:["Faraday's laws","Lenz's law","Motional EMF","Self-inductance","Mutual inductance","AC generator"]},
+      {n:"Ch 7: Alternating Current",t:["AC voltage and current","Phasors","AC through R L C","LC oscillations","LCR series circuit","Resonance","Power in AC circuit","Transformers"]}
     ]},
-    {unit:"Unit VI – Optics",chapters:[
-      {name:"Ch 9: Ray Optics",topics:["Reflection at spherical mirrors","Refraction","Total internal reflection","Refraction at spherical surfaces","Lenses","Lens maker's equation","Prism refraction","Scattering","Eye","Microscope","Telescope"]},
-      {name:"Ch 10: Wave Optics",topics:["Wavefront","Huygens principle","Coherent sources","Young's double slit","Interference","Diffraction","Single slit diffraction","Polarisation","Malus's law","Brewster's law"]}
+    {u:"Unit V - Electromagnetic Waves",ch:[
+      {n:"Ch 8: Electromagnetic Waves",t:["Displacement current","Maxwell's equations","EM wave properties","EM spectrum","Uses of EM waves"]}
     ]},
-    {unit:"Unit VII – Dual Nature",chapters:[
-      {name:"Ch 11: Dual Nature of Radiation and Matter",topics:["Photoelectric effect","Einstein's equation","Particle nature of light","de Broglie hypothesis","Davisson-Germer experiment"]}
+    {u:"Unit VI - Optics",ch:[
+      {n:"Ch 9: Ray Optics",t:["Reflection at spherical mirrors","Refraction","Total internal reflection","Refraction at spherical surfaces","Lenses","Lens maker's equation","Prism refraction","Scattering","Eye","Microscope","Telescope"]},
+      {n:"Ch 10: Wave Optics",t:["Wavefront","Huygens principle","Coherent sources","Young's double slit","Interference","Diffraction","Single slit diffraction","Polarisation","Malus's law","Brewster's law"]}
     ]},
-    {unit:"Unit VIII – Atoms & Nuclei",chapters:[
-      {name:"Ch 12: Atoms",topics:["Alpha-particle scattering","Rutherford model","Bohr model","Energy levels","Hydrogen spectrum"]},
-      {name:"Ch 13: Nuclei",topics:["Nuclear size","Binding energy","Nuclear force","Radioactivity","Alpha decay","Beta decay","Gamma decay","Nuclear fission","Nuclear fusion"]}
+    {u:"Unit VII - Dual Nature",ch:[
+      {n:"Ch 11: Dual Nature of Radiation and Matter",t:["Photoelectric effect","Einstein's equation","Particle nature of light","de Broglie hypothesis","Davisson-Germer experiment"]}
     ]},
-    {unit:"Unit IX – Electronic Devices",chapters:[
-      {name:"Ch 14: Semiconductor Electronics",topics:["Energy bands","Intrinsic semiconductor","Extrinsic semiconductor","p-n junction","Rectifiers","Zener diode","LED","Solar cell","Transistor","Logic gates"]}
+    {u:"Unit VIII - Atoms and Nuclei",ch:[
+      {n:"Ch 12: Atoms",t:["Alpha-particle scattering","Rutherford model","Bohr model","Energy levels","Hydrogen spectrum"]},
+      {n:"Ch 13: Nuclei",t:["Nuclear size","Binding energy","Nuclear force","Radioactivity","Alpha decay","Beta decay","Gamma decay","Nuclear fission","Nuclear fusion"]}
+    ]},
+    {u:"Unit IX - Electronic Devices",ch:[
+      {n:"Ch 14: Semiconductor Electronics",t:["Energy bands","Intrinsic semiconductor","Extrinsic semiconductor","p-n junction","Rectifiers","Zener diode","LED","Solar cell","Transistor","Logic gates"]}
     ]}
-
+  ],
+  chemistry:[
+    {u:"Unit 1 - Solutions",ch:[{n:"Solutions",t:["Types of solutions","Concentration expressions","Solubility of gases","Raoult's law","Relative lowering of vapour pressure","Elevation of boiling point","Depression of freezing point","Osmotic pressure","Abnormal molecular mass","Van't Hoff factor"]}]},
+    {u:"Unit 2 - Electrochemistry",ch:[{n:"Electrochemistry",t:["Redox reactions","EMF of a cell","Standard electrode potential","Nernst equation","Gibbs energy and EMF","Conductance","Specific and molar conductivity","Kohlrausch's Law","Electrolysis","Galvanic cells","Lead accumulator","Fuel cells","Corrosion"]}]},
+    {u:"Unit 3 - Chemical Kinetics",ch:[{n:"Chemical Kinetics",t:["Rate of reaction","Factors affecting rate","Order and molecularity","Rate law","Zero order reactions","First order reactions","Half-life","Collision theory","Activation energy","Arrhenius equation"]}]},
+    {u:"Unit 4 - d and f Block",ch:[{n:"d and f Block Elements",t:["Electronic config of transition metals","Properties of transition metals","Oxidation states","Colour of compounds","Catalytic property","Magnetic properties","K2Cr2O7","KMnO4","Lanthanides","Actinides"]}]},
+    {u:"Unit 5 - Coordination Compounds",ch:[{n:"Coordination Compounds",t:["Ligands and coordination number","IUPAC nomenclature","Werner's theory","Valence Bond Theory","Crystal Field Theory","Colour and magnetic properties","Stereoisomerism"]}]},
+    {u:"Unit 6 - Haloalkanes and Haloarenes",ch:[{n:"Haloalkanes and Haloarenes",t:["Nomenclature","Nature of C-X bond","Physical properties","Chemical properties","Optical rotation","Substitution reactions","Environmental effects"]}]},
+    {u:"Unit 7 - Alcohols Phenols and Ethers",ch:[{n:"Alcohols Phenols and Ethers",t:["Nomenclature of alcohols","Preparation of alcohols","Properties of alcohols","Mechanism of dehydration","Nomenclature of phenols","Acidic nature of phenol","Electrophilic substitution","Nomenclature of ethers","Preparation of ethers","Properties of ethers"]}]},
+    {u:"Unit 8 - Aldehydes Ketones and Carboxylic Acids",ch:[
+      {n:"Aldehydes and Ketones",t:["Nomenclature","Carbonyl group","Preparation","Properties","Nucleophilic addition","Reactivity of alpha hydrogen"]},
+      {n:"Carboxylic Acids",t:["Nomenclature","Acidic nature","Preparation","Physical properties","Chemical properties"]}
+    ]},
+    {u:"Unit 9 - Amines",ch:[
+      {n:"Amines",t:["Nomenclature and classification","Structure","Preparation","Physical and chemical properties","Identification of amines"]},
+      {n:"Diazonium Salts",t:["Preparation","Chemical reactions","Importance in organic synthesis"]}
+    ]},
+    {u:"Unit 10 - Biomolecules",ch:[{n:"Biomolecules",t:["Carbohydrates classification","Monosaccharides","Oligosaccharides","Polysaccharides","Proteins and amino acids","Peptide bond","Protein structure","Denaturation","Enzymes","Vitamins","Nucleic Acids"]}]}
+  ],
+  biology:[
+    {u:"Unit VI - Reproduction",ch:[
+      {n:"Ch 2: Sexual Reproduction in Flowering Plants",t:["Flower structure","Male gametophyte","Female gametophyte","Types of pollination","Pollination agencies","Out breeding devices","Pollen-pistil interaction","Double fertilization","Endosperm and embryo development","Seed and fruit development","Apomixis","Parthenocarpy","Polyembryony"]},
+      {n:"Ch 3: Human Reproduction",t:["Male reproductive system","Female reproductive system","Spermatogenesis","Oogenesis","Menstrual cycle","Fertilization","Embryo development","Implantation","Pregnancy and placenta","Parturition","Lactation"]},
+      {n:"Ch 4: Reproductive Health",t:["Need for reproductive health","STDs and prevention","Birth control methods","Contraception","MTP","Amniocentesis","Infertility","IVF ZIFT GIFT"]}
+    ]},
+    {u:"Unit VII - Genetics and Evolution",ch:[
+      {n:"Ch 5: Principles of Inheritance and Variation",t:["Mendelian inheritance","Incomplete dominance","Co-dominance","Multiple alleles and blood groups","Pleiotropy","Polygenic inheritance","Chromosome theory","Sex determination","Linkage and crossing over","Haemophilia","Colour blindness","Thalassemia","Down's syndrome","Turner's syndrome","Klinefelter's syndrome"]},
+      {n:"Ch 6: Molecular Basis of Inheritance",t:["DNA as genetic material","Structure of DNA","Structure of RNA","DNA packaging","DNA replication","Central Dogma","Transcription","Genetic code","Translation","lac operon","Human genome project","DNA fingerprinting"]},
+      {n:"Ch 7: Evolution",t:["Origin of life","Evidence for evolution","Darwin's contribution","Modern synthetic theory","Mutation and recombination","Natural selection","Gene flow and genetic drift","Hardy-Weinberg principle","Adaptive radiation","Human evolution"]}
+    ]},
+    {u:"Unit VIII - Biology and Human Welfare",ch:[
+      {n:"Ch 8: Human Health and Diseases",t:["Pathogens and parasites","Malaria","Dengue and Chikungunya","Filariasis","Ascariasis","Typhoid","Pneumonia","Common cold","Amoebiasis","Ringworm","Basic immunology","Vaccines","Cancer","HIV and AIDS","Drug and alcohol abuse"]},
+      {n:"Ch 10: Microbes in Human Welfare",t:["Microbes in food processing","Industrial production","Sewage treatment","Energy generation","Bio-control agents","Bio-fertilizers","Antibiotics"]}
+    ]},
+    {u:"Unit IX - Biotechnology",ch:[
+      {n:"Ch 11: Biotechnology - Principles",t:["Recombinant DNA technology","Tools of rDNA technology","Processes in rDNA technology"]},
+      {n:"Ch 12: Biotechnology - Applications",t:["Human insulin production","Vaccine production","Stem cell technology","Gene therapy","GMOs and Bt crops","Transgenic animals","Biosafety issues","Biopiracy and patents"]}
+    ]},
+    {u:"Unit X - Ecology and Environment",ch:[
+      {n:"Ch 13: Organisms and Populations",t:["Mutualism","Competition","Predation","Parasitism","Population attributes","Population growth","Birth and death rate","Age distribution"]},
+      {n:"Ch 14: Ecosystem",t:["Ecosystem patterns","Components","Productivity","Decomposition","Energy flow","Pyramids of number","Pyramids of biomass","Pyramids of energy"]},
+      {n:"Ch 15: Biodiversity and Conservation",t:["Biodiversity concept","Patterns of biodiversity","Importance","Loss of biodiversity","Hotspots","Endangered organisms","Extinction","Red Data Book","Biosphere reserves","National parks","Wildlife sanctuaries","Ramsar sites"]}
+    ]}
+  ]
 };
 
+const S11 = {
+  physics:[
+    {u:"Unit I - Physical World and Measurement",ch:[
+      {n:"Ch 1: Units and Measurements",t:["Need for measurement","Units of measurement","SI units","Fundamental and derived units","Significant figures","Dimensions of physical quantities","Dimensional analysis","Applications of dimensional analysis"]}
+    ]},
+    {u:"Unit II - Kinematics",ch:[
+      {n:"Ch 2: Motion in a Straight Line",t:["Frame of reference","Motion in a straight line","Uniform and non-uniform motion","Instantaneous velocity","Uniformly accelerated motion","Velocity-time graphs","Position-time graphs","Relations for uniformly accelerated motion"]},
+      {n:"Ch 3: Motion in a Plane",t:["Scalar and vector quantities","Position and displacement vectors","Addition and subtraction of vectors","Unit vector","Resolution of a vector","Rectangular components","Scalar and vector product","Projectile motion","Uniform circular motion"]}
+    ]},
+    {u:"Unit III - Laws of Motion",ch:[
+      {n:"Ch 4: Laws of Motion",t:["Concept of force","Inertia","Newton's first law","Momentum and Newton's second law","Impulse","Newton's third law","Conservation of linear momentum","Equilibrium of concurrent forces","Static and kinetic friction","Laws of friction","Rolling friction","Centripetal force","Circular motion examples"]}
+    ]},
+    {u:"Unit IV - Work Energy and Power",ch:[
+      {n:"Ch 5: Work Energy and Power",t:["Work done by constant force","Work done by variable force","Kinetic energy","Work-energy theorem","Power","Potential energy","Spring potential energy","Conservative forces","Motion in a vertical circle","Elastic collisions","Inelastic collisions"]}
+    ]},
+    {u:"Unit V - Motion of System of Particles",ch:[
+      {n:"Ch 6: System of Particles and Rotational Motion",t:["Centre of mass","Momentum conservation","Centre of mass of rigid body","Torque","Angular momentum","Conservation of angular momentum","Equilibrium of rigid bodies","Rotational motion equations","Moment of inertia","Radius of gyration"]}
+    ]},
+    {u:"Unit VI - Gravitation",ch:[
+      {n:"Ch 7: Gravitation",t:["Kepler's laws","Universal law of gravitation","Acceleration due to gravity","Variation with altitude and depth","Gravitational potential energy","Gravitational potential","Escape speed","Orbital velocity of satellite"]}
+    ]},
+    {u:"Unit VII - Properties of Bulk Matter",ch:[
+      {n:"Ch 8: Mechanical Properties of Solids",t:["Elasticity","Stress-strain relationship","Hooke's law","Young's modulus","Bulk modulus","Shear modulus","Poisson's ratio","Elastic energy"]},
+      {n:"Ch 9: Mechanical Properties of Fluids",t:["Pressure in a fluid column","Pascal's law","Hydraulic lift","Viscosity","Stokes law","Terminal velocity","Streamlined flow","Turbulent flow","Bernoulli's theorem","Surface tension","Angle of contact","Capillary rise"]},
+      {n:"Ch 10: Thermal Properties of Matter",t:["Heat and temperature","Thermal expansion of solids","Thermal expansion of liquids","Thermal expansion of gases","Anomalous expansion of water","Specific heat capacity","Calorimetry","Change of state","Latent heat","Heat conduction","Heat convection","Heat radiation","Stefan's law","Wien's law"]}
+    ]},
+    {u:"Unit VIII - Thermodynamics",ch:[
+      {n:"Ch 11: Thermodynamics",t:["Thermal equilibrium","Zeroth law","Internal energy","First law of thermodynamics","Second law of thermodynamics","Isothermal process","Adiabatic process","Reversible and irreversible processes","Cyclic processes"]}
+    ]},
+    {u:"Unit IX - Kinetic Theory",ch:[
+      {n:"Ch 12: Kinetic Theory",t:["Equation of state of perfect gas","Kinetic theory of gases","Concept of pressure","Kinetic interpretation of temperature","RMS speed","Degrees of freedom","Law of equipartition of energy","Specific heat capacities of gases","Mean free path","Avogadro's number"]}
+    ]},
+    {u:"Unit X - Oscillations and Waves",ch:[
+      {n:"Ch 13: Oscillations",t:["Periodic motion","Period and frequency","Simple harmonic motion","SHM equations","Phase","Oscillations of a spring","Energy in SHM","Simple pendulum"]},
+      {n:"Ch 14: Waves",t:["Wave motion","Transverse and longitudinal waves","Speed of wave","Displacement relation for progressive wave","Principle of superposition","Reflection of waves","Standing waves in strings","Standing waves in organ pipes","Fundamental mode and harmonics","Beats"]}
+    ]}
+  ],
+  chemistry:[
+    {u:"Unit I - Some Basic Concepts",ch:[{n:"Some Basic Concepts of Chemistry",t:["General introduction","Laws of chemical combination","Dalton's atomic theory","Atomic and molecular masses","Mole concept","Molar mass","Chemical reactions","Stoichiometry"]}]},
+    {u:"Unit II - Structure of Atom",ch:[{n:"Structure of Atom",t:["Discovery of subatomic particles","Atomic number","Isotopes and isobars","Thomson model","Rutherford model","Bohr model","Dual nature of matter","de Broglie relation","Heisenberg uncertainty principle","Quantum numbers","Shapes of orbitals","Aufbau principle","Pauli exclusion principle","Hund's rule","Electronic configuration"]}]},
+    {u:"Unit III - Classification of Elements",ch:[{n:"Classification of Elements and Periodicity",t:["Modern periodic law","Long form of periodic table","Periodic trends","Atomic radii","Ionic radii","Ionisation enthalpy","Electron gain enthalpy","Electronegativity","Valency"]}]},
+    {u:"Unit IV - Chemical Bonding",ch:[{n:"Chemical Bonding and Molecular Structure",t:["Valence electrons","Ionic bond","Covalent bond","Bond parameters","Lewis structures","VSEPR theory","Hybridization sp sp2 sp3","Molecular orbital theory","Bonding and antibonding orbitals","Hydrogen bonding"]}]},
+    {u:"Unit V - Chemical Thermodynamics",ch:[{n:"Chemical Thermodynamics",t:["Systems and surroundings","Work heat and energy","State functions","First law of thermodynamics","Internal energy","Enthalpy","Heat capacity","Hess's law","Enthalpy of bond dissociation","Enthalpy of combustion","Enthalpy of formation","Second law - entropy","Third law of thermodynamics"]}]},
+    {u:"Unit VI - Equilibrium",ch:[{n:"Equilibrium",t:["Physical equilibrium","Chemical equilibrium","Law of mass action","Equilibrium constant Kp and Kc","Le Chatelier's principle","Ionic equilibrium","Strong and weak electrolytes","Degree of ionization","pH","Buffer solutions","Hydrolysis of salts","Solubility product","Common ion effect"]}]},
+    {u:"Unit VII - Redox Reactions",ch:[{n:"Redox Reactions",t:["Oxidation and reduction","Oxidation number","Balancing redox reactions by oxidation number method","Balancing by half-reaction method"]}]},
+    {u:"Unit VIII - Organic Chemistry Basics",ch:[{n:"Organic Chemistry - Basic Principles and Techniques",t:["Introduction to organic chemistry","Purification methods","Classification of organic compounds","IUPAC nomenclature","Inductive effect","Electromeric effect","Resonance","Hyperconjugation","Homolytic fission","Heterolytic fission","Free radicals","Carbocations","Carbanions","Electrophiles and nucleophiles","Types of organic reactions"]}]},
+    {u:"Unit IX - Hydrocarbons",ch:[{n:"Hydrocarbons",t:["Classification of hydrocarbons","Nomenclature","Isomerism","Conformation of alkanes","Physical properties of alkanes","Halogenation of alkanes","Combustion of alkanes","Pyrolysis","Alkenes - structure and preparation","Addition reactions of alkenes","Alkynes - structure and preparation","Addition reactions of alkynes","Benzene - structure","Electrophilic substitution in benzene"]}]}
+  ],
+  biology:[
+    {u:"Unit I - Diversity of Living Organisms",ch:[
+      {n:"Ch 1: The Living World",t:["Biodiversity","Need for classification","Three domains of life","Taxonomy and systematics","Species concept","Taxonomical hierarchy","Binomial nomenclature"]},
+      {n:"Ch 2: Biological Classification",t:["Five kingdom classification","Monera - salient features","Protista - salient features","Fungi - salient features","Lichens","Viruses","Viroids"]},
+      {n:"Ch 3: Plant Kingdom",t:["Classification of plants","Algae - salient features","Bryophyta - salient features","Pteridophyta - salient features","Gymnospermae - salient features","Plant life cycle","Alternation of generations"]},
+      {n:"Ch 4: Animal Kingdom",t:["Basis of classification","Non-chordates up to phylum level","Chordates up to class level"]}
+    ]},
+    {u:"Unit II - Structural Organisation",ch:[
+      {n:"Ch 5: Morphology of Flowering Plants",t:["Morphology of root","Morphology of stem","Morphology of leaf","Inflorescence","Flower morphology","Fruit","Seed","Description of family Solanaceae"]},
+      {n:"Ch 6: Anatomy of Flowering Plants",t:["Anatomy of tissue systems","Tissue systems in dicots","Tissue systems in monocots"]},
+      {n:"Ch 7: Structural Organisation in Animals",t:["Morphology of frog","Digestive system of frog","Circulatory system of frog","Respiratory system of frog","Nervous system of frog","Reproductive system of frog"]}
+    ]},
+    {u:"Unit III - Cell Structure and Function",ch:[
+      {n:"Ch 8: Cell - The Unit of Life",t:["Cell theory","Prokaryotic cell","Eukaryotic cell","Cell envelope","Cell membrane","Cell wall","Endoplasmic reticulum","Golgi bodies","Lysosomes","Vacuoles","Mitochondria","Ribosomes","Plastids","Microbodies","Cytoskeleton","Cilia and flagella","Centrioles","Nucleus"]},
+      {n:"Ch 9: Biomolecules",t:["Chemical constituents of living cells","Structure and function of proteins","Carbohydrates","Lipids","Nucleic acids","Enzyme types","Enzyme properties","Enzyme action"]},
+      {n:"Ch 10: Cell Cycle and Cell Division",t:["Cell cycle","Mitosis - phases","Mitosis - significance","Meiosis - phases","Meiosis - significance"]}
+    ]},
+    {u:"Unit IV - Plant Physiology",ch:[
+      {n:"Ch 11: Photosynthesis in Higher Plants",t:["Autotrophic nutrition","Site of photosynthesis","Photosynthetic pigments","Photochemical phase","Biosynthetic phase","Cyclic photophosphorylation","Non-cyclic photophosphorylation","Chemiosmotic hypothesis","Photorespiration","C3 pathway","C4 pathway","Factors affecting photosynthesis"]},
+      {n:"Ch 12: Respiration in Plants",t:["Exchange of gases","Glycolysis","Fermentation","TCA cycle","Electron transport system","ATP generation","Amphibolic pathways","Respiratory quotient"]},
+      {n:"Ch 13: Plant Growth and Development",t:["Seed germination","Phases of plant growth","Plant growth rate","Conditions of growth","Differentiation","Dedifferentiation","Redifferentiation","Auxin","Gibberellin","Cytokinin","Ethylene","ABA"]}
+    ]},
+    {u:"Unit V - Human Physiology",ch:[
+      {n:"Ch 14: Breathing and Exchange of Gases",t:["Respiratory organs in animals","Respiratory system in humans","Mechanism of breathing","Regulation of respiration","Gas exchange","Transport of gases","Respiratory volumes","Asthma","Emphysema","Occupational respiratory disorders"]},
+      {n:"Ch 15: Body Fluids and Circulation",t:["Composition of blood","Blood groups","Coagulation of blood","Lymph and its function","Structure of human heart","Blood vessels","Cardiac cycle","Cardiac output","ECG","Double circulation","Regulation of cardiac activity","Hypertension","Coronary artery disease","Angina pectoris","Heart failure"]},
+      {n:"Ch 16: Excretory Products and Elimination",t:["Modes of excretion","Human excretory system","Urine formation","Osmoregulation","Regulation of kidney function","Uremia","Renal failure","Renal calculi","Nephritis","Dialysis","Kidney transplant"]},
+      {n:"Ch 17: Locomotion and Movement",t:["Types of movement","Skeletal muscle","Contractile proteins","Muscle contraction","Skeletal system","Joints","Myasthenia gravis","Tetany","Muscular dystrophy","Arthritis","Osteoporosis","Gout"]},
+      {n:"Ch 18: Neural Control and Coordination",t:["Neuron and nerves","Central nervous system","Peripheral nervous system","Visceral nervous system","Generation of nerve impulse","Conduction of nerve impulse"]},
+      {n:"Ch 19: Chemical Coordination and Integration",t:["Endocrine glands and hormones","Hypothalamus","Pituitary gland","Pineal gland","Thyroid gland","Parathyroid gland","Adrenal gland","Pancreas","Gonads","Mechanism of hormone action","Disorders - dwarfism acromegaly cretinism goiter diabetes"]}
+    ]}
+  ]
+};
+
+const SYLLABUS = { class12: S12, class11: S11 };
+
+// CONSTANTS
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAY_NAMES=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const HOURS=Array.from({length:24},(_,i)=>i===0?'12 AM':i<12?i+' AM':i===12?'12 PM':(i-12)+' PM');
+const AY_START=2026,AY_END=2080;
+const AY_MONTHS=[3,4,5,6,7,8,9,10,11,0,1,2];
 
-// Academic year = April (year) to March (year+1)
-// e.g. AY 2026 = April 2026 – March 2027
-const AY_START = 2026;
-const AY_END   = 2080;
+// STATE
+let CU=null,cache={sessions:{},completed:{}},syncTimer=null;
+let curAY=AY_START,curMo=null,curDay=null,curSub='physics',curCls='class12';
+let navStack=[],unitExp={},topicExp={};
 
-// Academic year months in order: Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar
-const AY_MONTHS = [3,4,5,6,7,8,9,10,11,0,1,2]; // 0=Jan, 3=Apr
-
-function isLeapYear(y){ return (y%4===0&&y%100!==0)||y%400===0; }
-
-function daysInMonth(month, year){
-  // month: 0-indexed JS month
-  const days=[31,28,31,30,31,30,31,31,30,31,30,31];
-  if(month===1) return isLeapYear(year)?29:28;
-  return days[month];
-}
-
-function getCalYear(ayYear, monthIdx){
-  // monthIdx 0-8 = Apr-Dec of ayYear, 9-11 = Jan-Mar of ayYear+1
-  return monthIdx < 9 ? ayYear : ayYear+1;
-}
-
-function ayLabel(ayYear){ return `${ayYear}–${String(ayYear+1).slice(2)}`; }
-
-// Day key format: AY_YEAR-MONTH(1-12)-DAY  e.g. "2026-4-15" = 15 April 2026
-function makeDayKey(ayYear, ayMonthIdx, day){
-  const calYear = getCalYear(ayYear, ayMonthIdx);
-  const calMonth = AY_MONTHS[ayMonthIdx]+1; // 1-indexed
-  return `${calYear}-${calMonth}-${day}`;
-}
-
-let currentUser=null;
-let cache={sessions:{},completed:{}};
-let syncTimer=null;
-let curAY=AY_START;
-let curMonth=null;
-let curDay=null;
-let curSub='physics';
-let curClass='class12'; // 'class11' or 'class12'
-let navStack=[];
-let unitExp={},topicExp={};
-
-// Helper: get current syllabus
-function getSyl(sub){ return SYLLABUS[curClass][sub]; }
+// HELPERS
+function isLeap(y){return(y%4===0&&y%100!==0)||y%400===0}
+function dim(mo,yr){return mo===1?(isLeap(yr)?29:28):[31,28,31,30,31,30,31,31,30,31,30,31][mo]}
+function calYr(ay,i){return i<9?ay:ay+1}
+function ayLbl(y){return y+'-'+String(y+1).slice(2)}
+function dayKey(ay,mi,d){return calYr(ay,mi)+'-'+(AY_MONTHS[mi]+1)+'-'+d}
+function getSyl(sub){return SYLLABUS[curCls][sub]}
 
 // SYNC
-function setSyncState(s){
-  const dot=document.getElementById('syncDot'),txt=document.getElementById('syncTxt');
+function syncState(s){
+  const dot=document.getElementById('sdot'),txt=document.getElementById('stxt');
   if(!dot)return;
-  dot.className='sync-dot '+s;
-  txt.textContent=s==='synced'?'Synced':s==='saving'?'Saving…':s==='error'?'Sync error':'Loading…';
+  dot.className='sdot '+s;
+  txt.textContent=s==='synced'?'Synced':s==='saving'?'Saving...':s==='error'?'Sync error':'Loading...';
+}
+
+async function gsf(url,opts={}){
+  const r=await fetch(url,{...opts,headers:{'Content-Type':'text/plain',...(opts.headers||{})}});
+  const t=await r.text();
+  try{return JSON.parse(t)}catch(e){throw new Error('Bad response: '+t.slice(0,100))}
 }
 
 async function loadData(){
-  setSyncState('loading');
+  syncState('loading');
   try{
-    const j = await Promise.race([
-      gsFetch(`${GS}?action=readData&email=${encodeURIComponent(currentUser.email)}`),
-      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000))
+    const j=await Promise.race([
+      gsf(GS+'?action=readData&email='+encodeURIComponent(CU.email)),
+      new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),5000))
     ]);
-    if(j.success&&j.data){
-      cache.sessions=j.data.sessions||{};
-      cache.completed=j.data.completed||{};
-      renderMonthGrid();
-      updateStats();
-    }
-    setSyncState('synced');
+    if(j.success&&j.data){cache.sessions=j.data.sessions||{};cache.completed=j.data.completed||{}}
+    syncState('synced');
   }catch(e){
-    cache.sessions=JSON.parse(localStorage.getItem('np_s_'+currentUser.email)||'{}');
-    cache.completed=JSON.parse(localStorage.getItem('np_c_'+currentUser.email)||'{}');
-    setSyncState('error');
-    console.warn('Load from cache:', e.message);
+    cache.sessions=JSON.parse(localStorage.getItem('np_s_'+CU.email)||'{}');
+    cache.completed=JSON.parse(localStorage.getItem('np_c_'+CU.email)||'{}');
+    syncState('error');
   }
 }
+
 async function saveData(){
-  setSyncState('saving');
-  localStorage.setItem('np_s_'+currentUser.email,JSON.stringify(cache.sessions));
-  localStorage.setItem('np_c_'+currentUser.email,JSON.stringify(cache.completed));
+  syncState('saving');
+  localStorage.setItem('np_s_'+CU.email,JSON.stringify(cache.sessions));
+  localStorage.setItem('np_c_'+CU.email,JSON.stringify(cache.completed));
   try{
-    await gsFetch(GS, {method:'POST', body:JSON.stringify({action:'saveData',email:currentUser.email,data:{sessions:cache.sessions,completed:cache.completed,progress:getAllProgress()}})});
-    setSyncState('synced');
-  }catch(e){setSyncState('error');console.warn('Save error:',e.message);}
+    await gsf(GS,{method:'POST',body:JSON.stringify({action:'saveData',email:CU.email,data:{sessions:cache.sessions,completed:cache.completed,progress:allProgress()}})});
+    syncState('synced');
+  }catch(e){syncState('error')}
 }
 
-function scheduleSave(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(saveData,900);}
+function sched(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(saveData,900)}
 
-function getProgressAll(){
-  const out={};
-  ['physics','chemistry','biology'].forEach(sub=>{
-    const syl=getSyl(sub);
-    const total=syl.reduce((s,u)=>s+u.chapters.length,0);
-    const done=syl.reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${curClass}_${sub}_ch_${ch.name}`]).length,0);
-    out[sub]=total?Math.round(done/total*100):0;
-  });
-  return out;
+function progress(cls,sub){
+  const syl=SYLLABUS[cls][sub];
+  const total=syl.reduce((s,u)=>s+u.ch.length,0);
+  const done=syl.reduce((s,u)=>s+u.ch.filter(c=>cache.completed[cls+'_'+sub+'_'+c.n]).length,0);
+  return total?Math.round(done/total*100):0;
 }
 
-function getAllProgress(){
-  // Save progress for both classes
-  const out={};
+function allProgress(){
+  const o={};
   ['class11','class12'].forEach(cls=>{
-    out[cls]={};
-    ['physics','chemistry','biology'].forEach(sub=>{
-      const syl=SYLLABUS[cls][sub];
-      const total=syl.reduce((s,u)=>s+u.chapters.length,0);
-      const done=syl.reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${cls}_${sub}_ch_${ch.name}`]).length,0);
-      out[cls][sub]=total?Math.round(done/total*100):0;
-    });
+    o[cls]={};
+    ['physics','chemistry','biology'].forEach(sub=>{o[cls][sub]=progress(cls,sub)});
   });
-  return out;
+  return o;
 }
 
-// AUTH
-const GOOGLE_CLIENT_ID = '41645202040-qb795laoaac2ira9923hp1kaj0nvq025.apps.googleusercontent.com';
-
-// Initialize Google Sign-In (also called after DOM loads below)
-function initGoogleSignIn() {
-  if(typeof google !== 'undefined') {
-    google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: handleGoogleResponse,
-      auto_select: false,
-      cancel_on_tap_outside: true
-    });
+// GOOGLE AUTH
+function initGSI(){
+  if(typeof google!=='undefined'){
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGR,auto_select:false,cancel_on_tap_outside:true});
   }
 }
 
-function signInWithGoogle() {
-  if(typeof google === 'undefined') {
-    alert('Google Sign-In is loading, please try again in a moment.');
-    return;
-  }
-  google.accounts.id.prompt((notification) => {
-    if(notification.isNotDisplayed() || notification.isSkippedMoment()) {
-      // Fallback: open the popup manually
-      google.accounts.id.renderButton(
-        document.createElement('div'),
-        { theme:'outline', size:'large' }
-      );
-      // Try one-tap
-      google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: 'email profile',
-        callback: async (tokenResponse) => {
-          if(tokenResponse.access_token) {
-            const res = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokenResponse.access_token}`);
-            const profile = await res.json();
-            await handleGoogleProfile(profile.email, profile.name, profile.picture);
-          }
+function signInWithGoogle(){
+  if(typeof google==='undefined'){alert('Google Sign-In loading, please try again.');return}
+  google.accounts.id.prompt(n=>{
+    if(n.isNotDisplayed()||n.isSkippedMoment()){
+      google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:'email profile',callback:async tr=>{
+        if(tr.access_token){
+          const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo?access_token='+tr.access_token);
+          const p=await res.json();
+          await handleGP(p.email,p.name,p.picture);
         }
-      }).requestAccessToken({prompt:'select_account'});
+      }}).requestAccessToken({prompt:'select_account'});
     }
   });
 }
 
-async function handleGoogleResponse(response) {
-  // Decode JWT token from Google
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  await handleGoogleProfile(payload.email, payload.name, payload.picture);
+async function handleGR(response){
+  const p=JSON.parse(atob(response.credential.split('.')[1]));
+  await handleGP(p.email,p.name,p.picture);
 }
 
-async function handleGoogleProfile(email, name, picture) {
-  setSyncState('loading');
-  try {
-    // Try login first
-    const loginJ = await Promise.race([
-      gsFetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}`),
-      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
+async function handleGP(email,name,picture){
+  syncState('loading');
+  try{
+    const lj=await Promise.race([
+      gsf(GS+'?action=login&email='+encodeURIComponent(email)+'&password=GOOGLE_AUTH_'+btoa(email)),
+      new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),8000))
     ]);
-    if(loginJ.success) {
-      currentUser = {email:loginJ.email, name:loginJ.name, role:loginJ.role, picture};
-      sessionStorage.setItem('np_user', JSON.stringify(currentUser));
-      enterApp();
-      return;
-    }
-    // Auto-signup if not found
-    const signupJ = await gsFetch(`${GS}?action=signup&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}&name=${encodeURIComponent(name)}`);
-    if(signupJ.success) {
-      currentUser = {email:signupJ.email, name:signupJ.name, role:signupJ.role, picture};
-      sessionStorage.setItem('np_user', JSON.stringify(currentUser));
-      enterApp();
-    } else {
-      setSyncState('error');
-      alert('Google Sign-In failed: ' + (signupJ.message||'Please try again.'));
-    }
-  } catch(e) {
-    setSyncState('error');
-    console.error('Google auth error:', e);
-    alert('Connection error. Please check your internet and try again.');
-  }
+    if(lj.success){CU={email:lj.email,name:lj.name,role:lj.role,picture};sessionStorage.setItem('np_user',JSON.stringify(CU));enterApp();return}
+    const sj=await gsf(GS+'?action=signup&email='+encodeURIComponent(email)+'&password=GOOGLE_AUTH_'+btoa(email)+'&name='+encodeURIComponent(name));
+    if(sj.success){CU={email:sj.email,name:sj.name,role:sj.role,picture};sessionStorage.setItem('np_user',JSON.stringify(CU));enterApp()}
+    else{syncState('error');alert('Google Sign-In failed: '+(sj.message||'Try again.'))}
+  }catch(e){syncState('error');alert('Connection error. Check internet and try again.')}
 }
 
-function switchAuthTab(tab){
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup')));
+// AUTH UI
+function switchTab(tab){
+  document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup')));
   document.getElementById('loginForm').classList.toggle('active',tab==='login');
   document.getElementById('signupForm').classList.toggle('active',tab==='signup');
-  ['loginErr','signupErr','signupOk'].forEach(id=>{const e=document.getElementById(id);if(e){e.classList.remove('show');e.textContent='';}});
-  document.querySelectorAll('.finput').forEach(i=>i.classList.remove('err'));
+  ['loginErr','signupErr','signupOk'].forEach(id=>{const e=document.getElementById(id);if(e){e.classList.remove('show');e.textContent=''}});
+  document.querySelectorAll('.fi').forEach(i=>i.classList.remove('err'));
 }
 
-function toggleEye(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
-
-// Helper: fetch from Google Apps Script (handles CORS)
-async function gsFetch(url, options={}){
-  const resp = await fetch(url, {
-    ...options,
-    headers: { 'Content-Type': 'text/plain', ...(options.headers||{}) }
-  });
-  const text = await resp.text();
-  try { return JSON.parse(text); }
-  catch(e) { throw new Error('Invalid response: ' + text.slice(0,100)); }
-}
+function toggleEye(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password'}
 
 async function doLogin(){
   const email=document.getElementById('loginEmail').value.trim();
   const pw=document.getElementById('loginPw').value;
-  const errEl=document.getElementById('loginErr');
-  errEl.classList.remove('show');
-  if(!email||!pw){errEl.textContent='Please fill all fields.';errEl.classList.add('show');return;}
+  const err=document.getElementById('loginErr');
+  err.classList.remove('show');
+  if(!email||!pw){err.textContent='Please fill all fields.';err.classList.add('show');return}
   const btn=document.getElementById('loginBtn');
-  btn.disabled=true;btn.textContent='Signing in…';
+  btn.disabled=true;btn.textContent='Signing in...';
   try{
-    const j=await gsFetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pw)}`);
-    if(j.success){
-      currentUser={email:j.email,name:j.name,role:j.role};
-      sessionStorage.setItem('np_user',JSON.stringify(currentUser));
-      enterApp();
-    } else {
-      errEl.textContent=j.message||'Invalid email or password.';
-      errEl.classList.add('show');
-      document.getElementById('loginPw').value='';
-    }
-  }catch(e){
-    errEl.textContent='Connection error. Please check your internet.';
-    errEl.classList.add('show');
-    console.error('Login error:',e);
-  }
+    const j=await gsf(GS+'?action=login&email='+encodeURIComponent(email)+'&password='+encodeURIComponent(pw));
+    if(j.success){CU={email:j.email,name:j.name,role:j.role};sessionStorage.setItem('np_user',JSON.stringify(CU));enterApp()}
+    else{err.textContent=j.message||'Invalid email or password.';err.classList.add('show');document.getElementById('loginPw').value=''}
+  }catch(e){err.textContent='Connection error. Please check your internet.';err.classList.add('show');console.error(e)}
   btn.disabled=false;btn.textContent='Sign In →';
 }
 
@@ -965,270 +675,224 @@ async function doSignup(){
   const name=document.getElementById('signupName').value.trim();
   const email=document.getElementById('signupEmail').value.trim();
   const pw=document.getElementById('signupPw').value;
-  const errEl=document.getElementById('signupErr');
-  const okEl=document.getElementById('signupOk');
-  errEl.classList.remove('show');okEl.classList.remove('show');
-  if(!name||!email||!pw){errEl.textContent='Please fill all fields.';errEl.classList.add('show');return;}
-  if(pw.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.classList.add('show');return;}
+  const err=document.getElementById('signupErr');
+  err.classList.remove('show');
+  if(!name||!email||!pw){err.textContent='Please fill all fields.';err.classList.add('show');return}
+  if(pw.length<6){err.textContent='Password must be at least 6 characters.';err.classList.add('show');return}
   const btn=document.getElementById('signupBtn');
-  btn.disabled=true;btn.textContent='Creating account…';
+  btn.disabled=true;btn.textContent='Creating account...';
   try{
-    const j=await gsFetch(`${GS}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pw)}&name=${encodeURIComponent(name)}`);
-    if(j.success){
-      currentUser={email:j.email,name:j.name,role:j.role};
-      sessionStorage.setItem('np_user',JSON.stringify(currentUser));
-      enterApp();
-    } else {
-      errEl.textContent=j.message||'Signup failed. Try again.';
-      errEl.classList.add('show');
-    }
-  }catch(e){
-    errEl.textContent='Connection error. Please check your internet.';
-    errEl.classList.add('show');
-    console.error('Signup error:',e);
-  }
+    const j=await gsf(GS+'?action=signup&email='+encodeURIComponent(email)+'&password='+encodeURIComponent(pw)+'&name='+encodeURIComponent(name));
+    if(j.success){CU={email:j.email,name:j.name,role:j.role};sessionStorage.setItem('np_user',JSON.stringify(CU));enterApp()}
+    else{err.textContent=j.message||'Signup failed. Try again.';err.classList.add('show')}
+  }catch(e){err.textContent='Connection error. Please check your internet.';err.classList.add('show');console.error(e)}
   btn.disabled=false;btn.textContent='Create Account →';
 }
 
 function doLogout(){
-  sessionStorage.removeItem('np_user');currentUser=null;cache={sessions:{},completed:{}};
-  navStack=[];curMonth=null;curDay=null;
+  sessionStorage.removeItem('np_user');CU=null;cache={sessions:{},completed:{}};
+  navStack=[];curMo=null;curDay=null;
   document.getElementById('appShell').style.display='none';
   document.getElementById('authPage').classList.add('active');
-  switchAuthTab('login');
+  switchTab('login');
   document.getElementById('loginEmail').value='';
   document.getElementById('loginPw').value='';
 }
 
 // APP ENTRY
-async function enterApp(){
+function enterApp(){
   document.getElementById('authPage').classList.remove('active');
   document.getElementById('appShell').style.display='block';
-  // Restore class preference
-  curClass = sessionStorage.getItem('np_class') || 'class12';
+  curCls=sessionStorage.getItem('np_cls')||'class12';
   const now=new Date();
-  const mo=now.getMonth(); // 0=Jan
-  curAY = mo>=3 ? now.getFullYear() : now.getFullYear()-1; // April+ = new AY
+  curAY=now.getMonth()>=3?now.getFullYear():now.getFullYear()-1;
   if(curAY<AY_START)curAY=AY_START;
   if(curAY>AY_END)curAY=AY_END;
-  // Avatar: Google picture or initials
-  const av = document.getElementById('userAv');
-  if(currentUser.picture) {
-    av.innerHTML = `<img src="${currentUser.picture}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;" onerror="this.parentElement.textContent='${currentUser.name.charAt(0).toUpperCase()}'"/>`;
-  } else {
-    av.textContent = currentUser.name.charAt(0).toUpperCase();
-  }
-  document.getElementById('userNm').textContent=currentUser.name;
-  document.getElementById('greetNm').textContent=currentUser.name.split(' ')[0];
-  document.getElementById('navAdmin').style.display=currentUser.role==='admin'?'flex':'none';
-  // Show home immediately with cached data, then sync in background
-  cache.sessions=JSON.parse(localStorage.getItem('np_s_'+currentUser.email)||'{}');
-  cache.completed=JSON.parse(localStorage.getItem('np_c_'+currentUser.email)||'{}');
+  const av=document.getElementById('uav');
+  if(CU.picture){av.innerHTML='<img src="'+CU.picture+'" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">';}
+  else{av.textContent=CU.name.charAt(0).toUpperCase()}
+  document.getElementById('unm').textContent=CU.name;
+  document.getElementById('greetNm').textContent=CU.name.split(' ')[0];
+  document.getElementById('navAdmin').style.display=CU.role==='admin'?'flex':'none';
+  cache.sessions=JSON.parse(localStorage.getItem('np_s_'+CU.email)||'{}');
+  cache.completed=JSON.parse(localStorage.getItem('np_c_'+CU.email)||'{}');
   showHome();
-  // Load fresh data from Sheets in background (re-renders automatically)
-  loadData();
+  loadData().then(()=>{renderMonthGrid();updateStats()});
 }
 
 // NAVIGATION
-function showPage(id){document.querySelectorAll('#appShell .page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function updateBackBtn(){document.getElementById('backBtn').classList.toggle('show',navStack.length>0);}
-function updateBC(){
+function showPage(id){document.querySelectorAll('#appShell .page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function updBack(){document.getElementById('backBtn').classList.toggle('show',navStack.length>0)}
+function updBC(){
   const el=document.getElementById('bcEl');
-  let parts=[];
-  if(navStack.length>=1&&curMonth!==null){
-    const mn=MONTHS[AY_MONTHS[curMonth]];
-    parts.push(`<span class="bc-item" onclick="showHome()">${ayLabel(curAY)}</span>`);
-    parts.push(`<span class="bc-sep">›</span><span class="bc-item" onclick="showDays(curMonth)">${mn}</span>`);
+  let h='';
+  if(navStack.length>=1&&curMo!==null){
+    const yr=calYr(curAY,curMo);
+    const mn=MONTHS[AY_MONTHS[curMo]];
+    h+='<span class="bci" onclick="showHome()">'+ayLbl(curAY)+'</span><span class="bcsep"> > </span><span class="bci" onclick="showDays(curMo)">'+mn+' '+yr+'</span>';
   }
   if(navStack.length>=2&&curDay!==null){
-    parts.push(`<span class="bc-sep">›</span><span class="bc-item">${curDay}</span>`);
+    h+='<span class="bcsep"> > </span><span class="bci">'+curDay+'</span>';
   }
-  el.innerHTML=parts.join('');
+  el.innerHTML=h;
 }
 function goBack(){
-  const prev=navStack.pop();
-  if(!prev||prev==='root'){showHome();return;}
-  if(prev==='home'){navStack=[];showHome();}
-  else if(prev==='days'){showDays(curMonth,true);}
-  updateBackBtn();updateBC();
+  const p=navStack.pop();
+  if(!p||p==='root'){showHome();return}
+  if(p==='home'){navStack=[];showHome()}
+  else if(p==='days'){showDays(curMo,true)}
+  updBack();updBC();
 }
-function setNavActive(id){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function setNav(id){document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+function updClsBtns(){
+  ['btn11','sbtn11'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.toggle('active',curCls==='class11')});
+  ['btn12','sbtn12'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.toggle('active',curCls==='class12')});
+}
 
 function showHome(back=false){
   if(!back)navStack=[];
-  setNavActive('navHome');
-  updateClassBtns();
-  populateAYSelect();
-  renderMonthGrid();
-  updateStats();
-  showPage('homePage');
-  updateBackBtn();updateBC();
+  setNav('navHome');updClsBtns();populateAY();renderMonthGrid();updateStats();showPage('homePage');updBack();updBC();
 }
 function showSyllabus(){
-  navStack=[];
-  setNavActive('navSyl');
-  unitExp={};topicExp={};
-  updateClassBtns();
-  renderSyllabus(curSub);
-  showPage('sylPage');
-  updateBackBtn();updateBC();
+  navStack=[];setNav('navSyl');unitExp={};topicExp={};updClsBtns();renderSyllabus(curSub);showPage('sylPage');updBack();updBC();
 }
-function showAdmin(){navStack=[];setNavActive('navAdmin');loadAdminData();showPage('adminPage');updateBackBtn();updateBC();}
+function showAdmin(){navStack=[];setNav('navAdmin');loadAdmin();showPage('adminPage');updBack();updBC()}
 
-// ACADEMIC YEAR CONTROLS
-function populateAYSelect(){
-  const sel=document.getElementById('aySelect');
-  if(!sel)return;
+function switchClass(cls){
+  curCls=cls;sessionStorage.setItem('np_cls',cls);
+  updClsBtns();updateStats();renderMonthGrid();
+}
+function switchClassSyl(cls){
+  curCls=cls;sessionStorage.setItem('np_cls',cls);
+  unitExp={};topicExp={};updClsBtns();renderSyllabus(curSub);
+}
+
+// AY
+function populateAY(){
+  const sel=document.getElementById('aySel');if(!sel)return;
   sel.innerHTML='';
   for(let y=AY_START;y<=AY_END;y++){
-    const o=document.createElement('option');
-    o.value=y; o.textContent=`AY ${ayLabel(y)}`;
-    if(y===curAY)o.selected=true;
-    sel.appendChild(o);
+    const o=document.createElement('option');o.value=y;o.textContent='AY '+ayLbl(y);if(y===curAY)o.selected=true;sel.appendChild(o);
   }
+  document.getElementById('ayLbl').textContent='Academic Year '+ayLbl(curAY)+' (Apr-Mar)';
 }
-
-function changeAY(dir){
-  const next=curAY+dir;
-  if(next<AY_START||next>AY_END)return;
-  curAY=next;
-  populateAYSelect();
-  renderMonthGrid();
-  document.getElementById('ayLabel').textContent=`Academic Year ${ayLabel(curAY)} · Apr–Mar`;
-}
-
-function jumpToAY(val){
-  curAY=parseInt(val);
-  renderMonthGrid();
-  document.getElementById('ayLabel').textContent=`Academic Year ${ayLabel(curAY)} · Apr–Mar`;
-}
+function changeAY(d){const n=curAY+d;if(n<AY_START||n>AY_END)return;curAY=n;populateAY();renderMonthGrid()}
+function jumpAY(v){curAY=parseInt(v);renderMonthGrid();document.getElementById('ayLbl').textContent='Academic Year '+ayLbl(curAY)+' (Apr-Mar)'}
 
 // MONTH GRID
 function renderMonthGrid(){
   const grid=document.getElementById('monthGrid');grid.innerHTML='';
-  document.getElementById('ayLabel').textContent=`Academic Year ${ayLabel(curAY)} · Apr–Mar`;
-  AY_MONTHS.forEach((calMo, ayMoIdx)=>{
-    const calYear=getCalYear(curAY,ayMoIdx);
-    const mName=MONTHS[calMo];
-    const days=daysInMonth(calMo,calYear);
-    // Check if any sessions exist for this month
-    const hasSessions=Array.from({length:days},(_,d)=>makeDayKey(curAY,ayMoIdx,d+1)).some(k=>cache.sessions[k]&&cache.sessions[k].length>0);
+  document.getElementById('ayLbl').textContent='Academic Year '+ayLbl(curAY)+' (Apr-Mar)';
+  AY_MONTHS.forEach((calMo,mi)=>{
+    const yr=calYr(curAY,mi);const days=dim(calMo,yr);
     const dots=Array.from({length:Math.min(days,21)},(_,d)=>{
-      const k=makeDayKey(curAY,ayMoIdx,d+1);
-      return `<div class="mdot${cache.sessions[k]&&cache.sessions[k].length?' on':''}"></div>`;
+      const k=dayKey(curAY,mi,d+1);
+      return '<div class="mdot'+(cache.sessions[k]&&cache.sessions[k].length?' on':'')+'"></div>';
     }).join('');
-    const card=document.createElement('div');card.className='month-card';
-    card.innerHTML=`<div class="mcs"></div>
-      <span class="month-nm">${mName}</span>
-      <span class="month-info">${calYear} · ${days} days</span>
-      <div class="month-dots">${dots}</div>`;
-    card.onclick=()=>showDays(ayMoIdx);
+    const card=document.createElement('div');card.className='mc';
+    card.innerHTML='<div class="mcs"></div><span class="mnm">'+MONTHS[calMo]+'</span><span class="minfo">'+yr+' · '+days+' days</span><div class="mdots">'+dots+'</div>';
+    card.onclick=()=>showDays(mi);
     grid.appendChild(card);
   });
 }
 
 function updateStats(){
-  const p=getProgressAll();
-  document.getElementById('statP').textContent=p.physics+'%';
-  document.getElementById('statC').textContent=p.chemistry+'%';
-  document.getElementById('statB').textContent=p.biology+'%';
+  ['physics','chemistry','biology'].forEach((sub,i)=>{
+    const id=['statP','statC','statB'][i];
+    document.getElementById(id).textContent=progress(curCls,sub)+'%';
+  });
 }
 
 // DAY GRID
-function showDays(ayMoIdx,back=false){
+function showDays(mi,back=false){
   if(!back)navStack.push('home');
-  curMonth=ayMoIdx;
-  const calYear=getCalYear(curAY,ayMoIdx);
-  const mName=MONTHS[AY_MONTHS[ayMoIdx]];
-  document.getElementById('daysTitle').textContent=`${mName} ${calYear}`;
-  renderDayGrid(ayMoIdx);showPage('daysPage');updateBackBtn();updateBC();
+  curMo=mi;
+  const yr=calYr(curAY,mi);
+  document.getElementById('daysTitle').textContent=MONTHS[AY_MONTHS[mi]]+' '+yr;
+  renderDayGrid(mi);showPage('daysPage');updBack();updBC();
 }
 
-function renderDayGrid(ayMoIdx){
+function renderDayGrid(mi){
   const hdr=document.getElementById('dayHdrRow'),grid=document.getElementById('dayGrid');
   hdr.innerHTML='';grid.innerHTML='';
-  DAY_NAMES.forEach(d=>{const c=document.createElement('div');c.className='dh-cell';c.textContent=d;hdr.appendChild(c);});
-  const calMo=AY_MONTHS[ayMoIdx];
-  const calYear=getCalYear(curAY,ayMoIdx);
-  const days=daysInMonth(calMo,calYear);
-  const firstDay=new Date(calYear,calMo,1).getDay();
-  for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='day-cell empty';grid.appendChild(e);}
+  DAY_NAMES.forEach(d=>{const c=document.createElement('div');c.className='dhc';c.textContent=d;hdr.appendChild(c)});
+  const calMo=AY_MONTHS[mi];const yr=calYr(curAY,mi);const days=dim(calMo,yr);
+  const firstDay=new Date(yr,calMo,1).getDay();
+  for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='dc empty';grid.appendChild(e)}
   const today=new Date();
   for(let d=1;d<=days;d++){
-    const cell=document.createElement('div');cell.className='day-cell';
-    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMo&&today.getDate()===d;
+    const cell=document.createElement('div');cell.className='dc';
+    const isToday=today.getFullYear()===yr&&today.getMonth()===calMo&&today.getDate()===d;
     if(isToday)cell.classList.add('today');
-    const dayKey=makeDayKey(curAY,ayMoIdx,d);
-    const sessions=cache.sessions[dayKey]||[];
-    const numEl=document.createElement('span');numEl.className='day-num';numEl.textContent=d;cell.appendChild(numEl);
+    const k=dayKey(curAY,mi,d);
+    const sessions=cache.sessions[k]||[];
+    const numEl=document.createElement('span');numEl.className='dnum';numEl.textContent=d;cell.appendChild(numEl);
     [...new Set(sessions.map(s=>s.subject))].slice(0,3).forEach(sub=>{
-      const pill=document.createElement('span');pill.className=`dpill ${sub}`;pill.textContent=sub.charAt(0).toUpperCase()+sub.slice(1);cell.appendChild(pill);
+      const pill=document.createElement('span');pill.className='dpill '+sub;pill.textContent=sub.charAt(0).toUpperCase()+sub.slice(1);cell.appendChild(pill);
     });
-    cell.onclick=()=>showTimetable(ayMoIdx,d);grid.appendChild(cell);
+    cell.onclick=()=>showTimetable(mi,d);grid.appendChild(cell);
   }
 }
 
 // TIMETABLE
-function showTimetable(ayMoIdx,day,back=false){
+function showTimetable(mi,day,back=false){
   if(!back)navStack.push('days');
-  curMonth=ayMoIdx;curDay=day;
-  const calYear=getCalYear(curAY,ayMoIdx);
-  const mName=MONTHS[AY_MONTHS[ayMoIdx]];
-  document.getElementById('ttTitle').textContent=`${day} ${mName} ${calYear}`;
-  renderTimetable(ayMoIdx,day);showPage('ttPage');updateBackBtn();updateBC();
+  curMo=mi;curDay=day;
+  const yr=calYr(curAY,mi);
+  document.getElementById('ttTitle').textContent=day+' '+MONTHS[AY_MONTHS[mi]]+' '+yr;
+  renderTT(mi,day);showPage('ttPage');updBack();updBC();
 }
 
-function renderTimetable(ayMoIdx,day){
-  const dayKey=makeDayKey(curAY,ayMoIdx,day);
-  const sessions=cache.sessions[dayKey]||[];
+function renderTT(mi,day){
+  const k=dayKey(curAY,mi,day);const sessions=cache.sessions[k]||[];
   const wrap=document.getElementById('ttWrap');wrap.innerHTML='';
   for(let h=0;h<24;h++){
     const s=sessions.find(x=>x.startHour<=h&&x.endHour>h);
     if(s&&s.startHour<h)continue;
-    const row=document.createElement('div');row.className='hour-row';
-    const lbl=document.createElement('div');lbl.className='hour-lbl';lbl.textContent=HOURS[h];row.appendChild(lbl);
-    const slot=document.createElement('div');slot.className='hour-slot';
+    const row=document.createElement('div');row.className='hrow';
+    const lbl=document.createElement('div');lbl.className='hlbl';lbl.textContent=HOURS[h];row.appendChild(lbl);
+    const slot=document.createElement('div');slot.className='hslot';
     if(s){
       slot.classList.add('has-sub',s.subject);
       const span=s.endHour-s.startHour;
       slot.style.minHeight=(50*span+7*(span-1))+'px';
-      slot.innerHTML=`<div><div class="slot-subj ${s.subject}">${s.subject.charAt(0).toUpperCase()+s.subject.slice(1)} · ${HOURS[s.startHour]}–${HOURS[s.endHour]}</div><div class="slot-topic">${s.topic||'No topic specified'}</div></div><button class="slot-del" onclick="delSession('${dayKey}',${s.startHour})">✕ Remove</button>`;
+      slot.innerHTML='<div><div class="ssubj '+s.subject+'">'+s.subject.charAt(0).toUpperCase()+s.subject.slice(1)+' · '+HOURS[s.startHour]+'-'+HOURS[s.endHour]+'</div><div class="stopic">'+(s.topic||'No topic specified')+'</div></div><button class="sdel" onclick="delSession(\''+k+'\','+s.startHour+')">Remove</button>';
     }else{
-      slot.innerHTML=`<span class="slot-hint">+ Add session</span>`;slot.onclick=()=>openModal(h);
+      slot.innerHTML='<span class="shint">+ Add session</span>';slot.onclick=()=>openModal(h);
     }
     row.appendChild(slot);wrap.appendChild(row);
   }
 }
 
-function delSession(dayKey,startH){
-  if(!cache.sessions[dayKey])return;
-  cache.sessions[dayKey]=cache.sessions[dayKey].filter(s=>s.startHour!==startH);
-  if(!cache.sessions[dayKey].length)delete cache.sessions[dayKey];
-  scheduleSave();renderTimetable(curMonth,curDay);renderDayGrid(curMonth);
+function delSession(k,sh){
+  if(!cache.sessions[k])return;
+  cache.sessions[k]=cache.sessions[k].filter(s=>s.startHour!==sh);
+  if(!cache.sessions[k].length)delete cache.sessions[k];
+  sched();renderTT(curMo,curDay);renderDayGrid(curMo);
 }
 
 // MODAL
 function openModal(h){
   const ss=document.getElementById('mStart'),es=document.getElementById('mEnd');
-  ss.innerHTML=Array.from({length:24},(_,i)=>`<option value="${i}"${i===h?' selected':''}>${HOURS[i]}</option>`).join('');
-  es.innerHTML=Array.from({length:24},(_,i)=>`<option value="${i}"${i===(h+1<24?h+1:h)?' selected':''}>${HOURS[i]}</option>`).join('');
+  ss.innerHTML=Array.from({length:24},(_,i)=>'<option value="'+i+'"'+(i===h?' selected':'')+'>'+HOURS[i]+'</option>').join('');
+  es.innerHTML=Array.from({length:24},(_,i)=>'<option value="'+i+'"'+(i===(h+1<24?h+1:h)?' selected':'')+'>'+HOURS[i]+'</option>').join('');
   document.getElementById('mSubject').value='';
-  document.getElementById('mTopic').innerHTML='<option value="">Select subject first…</option>';
-  // Update modal title to show class
-  document.querySelector('#sessionOverlay .modal-title').textContent=`Add Session · ${curClass==='class11'?'Class 11':'Class 12'}`;
+  document.getElementById('mTopic').innerHTML='<option value="">Select subject first...</option>';
+  document.getElementById('modalTitle').textContent='Add Session - '+(curCls==='class11'?'Class 11':'Class 12');
   document.getElementById('sessionOverlay').classList.add('open');
 }
-function closeModal(){document.getElementById('sessionOverlay').classList.remove('open');}
+function closeModal(){document.getElementById('sessionOverlay').classList.remove('open')}
 
 function populateTopics(){
   const sub=document.getElementById('mSubject').value,sel=document.getElementById('mTopic');
-  if(!sub){sel.innerHTML='<option value="">Select subject first…</option>';return;}
-  sel.innerHTML='<option value="">Select chapter/topic…</option>';
+  if(!sub){sel.innerHTML='<option value="">Select subject first...</option>';return}
+  sel.innerHTML='<option value="">Select chapter/topic...</option>';
   getSyl(sub).forEach(unit=>{
-    const og=document.createElement('optgroup');og.label=unit.unit;
-    unit.chapters.forEach(ch=>{
-      const o=document.createElement('option');o.value=ch.name;o.textContent=ch.name;og.appendChild(o);
-      ch.topics.forEach(t=>{const to=document.createElement('option');to.value=t;to.textContent='  ↳ '+t;og.appendChild(to);});
+    const og=document.createElement('optgroup');og.label=unit.u;
+    unit.ch.forEach(ch=>{
+      const o=document.createElement('option');o.value=ch.n;o.textContent=ch.n;og.appendChild(o);
+      ch.t.forEach(t=>{const to=document.createElement('option');to.value=t;to.textContent='  > '+t;og.appendChild(to)});
     });
     sel.appendChild(og);
   });
@@ -1239,92 +903,62 @@ function saveSession(){
   const topic=document.getElementById('mTopic').value;
   const sH=parseInt(document.getElementById('mStart').value);
   const eH=parseInt(document.getElementById('mEnd').value);
-  if(!sub){alert('Please select a subject!');return;}
-  if(eH<=sH){alert('End time must be after start time!');return;}
-  const dayKey=makeDayKey(curAY,curMonth,curDay);
-  if(!cache.sessions[dayKey])cache.sessions[dayKey]=[];
-  cache.sessions[dayKey]=cache.sessions[dayKey].filter(s=>s.endHour<=sH||s.startHour>=eH);
-  cache.sessions[dayKey].push({subject:sub,topic,startHour:sH,endHour:eH});
-  cache.sessions[dayKey].sort((a,b)=>a.startHour-b.startHour);
-  scheduleSave();closeModal();renderTimetable(curMonth,curDay);renderDayGrid(curMonth);
-}
-
-function switchClass(cls){
-  curClass = cls;
-  sessionStorage.setItem('np_class', cls);
-  updateClassBtns();
-  updateStats();
-  renderMonthGrid();
-}
-
-function switchClassSyl(cls){
-  curClass = cls;
-  sessionStorage.setItem('np_class', cls);
-  updateClassBtns();
-  unitExp = {}; topicExp = {};
-  renderSyllabus(curSub);
-}
-
-function updateClassBtns(){
-  // Home page buttons
-  const h11 = document.getElementById('cls11Btn');
-  const h12 = document.getElementById('cls12Btn');
-  if(h11){ h11.classList.toggle('active', curClass==='class11'); }
-  if(h12){ h12.classList.toggle('active', curClass==='class12'); }
-  // Syllabus page buttons
-  const s11 = document.getElementById('sylCls11Btn');
-  const s12 = document.getElementById('sylCls12Btn');
-  if(s11){ s11.classList.toggle('active', curClass==='class11'); }
-  if(s12){ s12.classList.toggle('active', curClass==='class12'); }
+  if(!sub){alert('Please select a subject!');return}
+  if(eH<=sH){alert('End time must be after start time!');return}
+  const k=dayKey(curAY,curMo,curDay);
+  if(!cache.sessions[k])cache.sessions[k]=[];
+  cache.sessions[k]=cache.sessions[k].filter(s=>s.endHour<=sH||s.startHour>=eH);
+  cache.sessions[k].push({subject:sub,topic,startHour:sH,endHour:eH});
+  cache.sessions[k].sort((a,b)=>a.startHour-b.startHour);
+  sched();closeModal();renderTT(curMo,curDay);renderDayGrid(curMo);
 }
 
 // SYLLABUS
 function switchSub(sub){
-  curSub=sub;document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector(`.sub-tab.${sub}`).classList.add('active');
+  curSub=sub;
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.stab.'+sub).classList.add('active');
   unitExp={};topicExp={};renderSyllabus(sub);
 }
 
 function renderSyllabus(sub){
   const wrap=document.getElementById('sylWrap');wrap.innerHTML='';
   const syl=getSyl(sub);
-  const total=syl.reduce((s,u)=>s+u.chapters.length,0);
-  const done=syl.reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${curClass}_${sub}_ch_${ch.name}`]).length,0);
+  const total=syl.reduce((s,u)=>s+u.ch.length,0);
+  const done=syl.reduce((s,u)=>s+u.ch.filter(c=>cache.completed[curCls+'_'+sub+'_'+c.n]).length,0);
   const pct=total?Math.round(done/total*100):0;
-  const bar=document.getElementById('progBar');bar.className=`prog-bar ${sub}`;bar.style.width=pct+'%';
-  document.getElementById('progTxt').textContent=`${done} of ${total} chapters`;
+  const bar=document.getElementById('progBar');bar.className='pb '+sub;bar.style.width=pct+'%';
+  document.getElementById('progTxt').textContent=done+' of '+total+' chapters';
   document.getElementById('progPct').textContent=pct+'%';
-
   syl.forEach((unit,ui)=>{
-    const chKey=(ch)=>`${curClass}_${sub}_ch_${ch.name}`;
-    const unitDone=unit.chapters.filter(ch=>cache.completed[chKey(ch)]).length;
-    const block=document.createElement('div');block.className='unit-block';
-    const hdr=document.createElement('div');hdr.className='unit-hdr';
-    hdr.innerHTML=`<div class="unit-hdr-left"><span class="unit-hdr-name">${unit.unit}</span><span class="unit-cnt ${sub}">${unitDone}/${unit.chapters.length}</span></div><span class="unit-chev${unitExp[ui]?' open':''}">▼</span>`;
-    hdr.onclick=()=>{unitExp[ui]=!unitExp[ui];block.querySelector('.unit-body').classList.toggle('open',unitExp[ui]);hdr.querySelector('.unit-chev').classList.toggle('open',unitExp[ui]);};
+    const udone=unit.ch.filter(c=>cache.completed[curCls+'_'+sub+'_'+c.n]).length;
+    const block=document.createElement('div');block.className='ublock';
+    const hdr=document.createElement('div');hdr.className='uhdr';
+    hdr.innerHTML='<div class="uhl"><span class="uhn">'+unit.u+'</span><span class="ucnt '+sub+'">'+udone+'/'+unit.ch.length+'</span></div><span class="uchev'+(unitExp[ui]?' open':'')+'">&#9660;</span>';
+    hdr.onclick=()=>{unitExp[ui]=!unitExp[ui];block.querySelector('.ubody').classList.toggle('open',unitExp[ui]);hdr.querySelector('.uchev').classList.toggle('open',unitExp[ui])};
     block.appendChild(hdr);
-    const body=document.createElement('div');body.className='unit-body'+(unitExp[ui]?' open':'');
-    unit.chapters.forEach((ch,ci)=>{
-      const ck=chKey(ch);const isDone=!!cache.completed[ck];
-      const item=document.createElement('div');item.className='ch-item';
-      const chk=document.createElement('div');chk.className=`ch-check${isDone?' done '+sub:''}`;
-      chk.onclick=e=>{e.stopPropagation();cache.completed[ck]=!cache.completed[ck];scheduleSave();renderSyllabus(sub);updateStats();};
+    const body=document.createElement('div');body.className='ubody'+(unitExp[ui]?' open':'');
+    unit.ch.forEach((ch,ci)=>{
+      const ck=curCls+'_'+sub+'_'+ch.n;const isDone=!!cache.completed[ck];
+      const item=document.createElement('div');item.className='chitem';
+      const chk=document.createElement('div');chk.className='chk'+(isDone?' done '+sub:'');
+      chk.onclick=e=>{e.stopPropagation();cache.completed[ck]=!cache.completed[ck];sched();renderSyllabus(sub);updateStats()};
       item.appendChild(chk);
-      const info=document.createElement('div');info.className='ch-info';
-      const nm=document.createElement('div');nm.className=`ch-name${isDone?' done':''}`;nm.textContent=ch.name;info.appendChild(nm);
-      if(ch.topics&&ch.topics.length){
-        const tkey=`${curClass}_${sub}_${ui}_${ci}`;
-        const tbtn=document.createElement('button');tbtn.className='topics-toggle-btn';
-        const tlist=document.createElement('div');tlist.className='topics-list'+(topicExp[tkey]?' open':'');
-        tbtn.textContent=topicExp[tkey]?'▲ Hide topics':`▼ Show ${ch.topics.length} topics`;
-        tbtn.onclick=e=>{e.stopPropagation();topicExp[tkey]=!topicExp[tkey];tlist.classList.toggle('open',topicExp[tkey]);tbtn.textContent=topicExp[tkey]?'▲ Hide topics':`▼ Show ${ch.topics.length} topics`;};
+      const info=document.createElement('div');info.className='chinfo';
+      const nm=document.createElement('div');nm.className='chnm'+(isDone?' done':'');nm.textContent=ch.n;info.appendChild(nm);
+      if(ch.t&&ch.t.length){
+        const tk=curCls+'_'+sub+'_'+ui+'_'+ci;
+        const tbtn=document.createElement('button');tbtn.className='ttbtn';
+        const tlist=document.createElement('div');tlist.className='tlist'+(topicExp[tk]?' open':'');
+        tbtn.textContent=topicExp[tk]?'Hide topics':'Show '+ch.t.length+' topics';
+        tbtn.onclick=e=>{e.stopPropagation();topicExp[tk]=!topicExp[tk];tlist.classList.toggle('open',topicExp[tk]);tbtn.textContent=topicExp[tk]?'Hide topics':'Show '+ch.t.length+' topics'};
         info.appendChild(tbtn);
-        ch.topics.forEach(t=>{
-          const tk=`${curClass}_${sub}_topic_${t}`;const tdone=!!cache.completed[tk];
-          const tr=document.createElement('div');tr.className='topic-row';
-          const tc=document.createElement('div');tc.className=`topic-check${tdone?' done '+sub:''}`;
-          tc.onclick=e=>{e.stopPropagation();cache.completed[tk]=!cache.completed[tk];scheduleSave();renderSyllabus(sub);};
-          const tn=document.createElement('div');tn.className=`topic-name${tdone?' done':''}`;tn.textContent=t;
+        ch.t.forEach(t=>{
+          const kk=curCls+'_'+sub+'_topic_'+t;const td=!!cache.completed[kk];
+          const tr=document.createElement('div');tr.className='trow3';
+          const tc=document.createElement('div');tc.className='tchk'+(td?' done '+sub:'');
+          tc.onclick=e=>{e.stopPropagation();cache.completed[kk]=!cache.completed[kk];sched();renderSyllabus(sub)};
+          const tn=document.createElement('div');tn.className='tnm'+(td?' done':'');tn.textContent=t;
           tr.appendChild(tc);tr.appendChild(tn);tlist.appendChild(tr);
         });
         info.appendChild(tlist);
@@ -1336,67 +970,41 @@ function renderSyllabus(sub){
 }
 
 // ADMIN
-async function loadAdminData(){
+async function loadAdmin(){
   const body=document.getElementById('usersBody');
-  body.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--muted);font-size:0.82rem;padding:24px">Loading students…</td></tr>`;
+  body.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:24px">Loading...</td></tr>';
   try{
-    const j=await gsFetch(`${GS}?action=getUsers&email=${encodeURIComponent(ADMIN_EMAIL)}&password=${encodeURIComponent(ADMIN_PASS)}`);
-    if(!j.success){body.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--red);padding:24px;font-size:0.82rem">${j.message}</td></tr>`;return;}
+    const j=await gsf(GS+'?action=getUsers&email='+encodeURIComponent(ADMIN_EMAIL)+'&password='+encodeURIComponent(ADMIN_PASS));
+    if(!j.success){body.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--rd);padding:24px">'+j.message+'</td></tr>';return}
     const users=j.users||[];
-    const statsEl=document.getElementById('adminStats');
-    const avgP=users.length?Math.round(users.reduce((s,u)=>s+(u.progress?.physics||0),0)/users.length):0;
-    const avgC=users.length?Math.round(users.reduce((s,u)=>s+(u.progress?.chemistry||0),0)/users.length):0;
-    const avgB=users.length?Math.round(users.reduce((s,u)=>s+(u.progress?.biology||0),0)/users.length):0;
-    const avgAll=users.length?Math.round((avgP+avgC+avgB)/3):0;
-    statsEl.innerHTML=`
-      <div class="admin-stat"><span class="admin-stat-val">${users.length}</span><span class="admin-stat-lbl">Students</span></div>
-      <div class="admin-stat"><span class="admin-stat-val" style="color:var(--physics)">${avgP}%</span><span class="admin-stat-lbl">Avg Physics</span></div>
-      <div class="admin-stat"><span class="admin-stat-val" style="color:var(--chemistry)">${avgC}%</span><span class="admin-stat-lbl">Avg Chemistry</span></div>
-      <div class="admin-stat"><span class="admin-stat-val" style="color:var(--biology)">${avgB}%</span><span class="admin-stat-lbl">Avg Biology</span></div>
-      <div class="admin-stat"><span class="admin-stat-val">${avgAll}%</span><span class="admin-stat-lbl">Avg Overall</span></div>`;
-    if(!users.length){body.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:48px;color:var(--muted)">👥 No students yet. Share the link!</td></tr>`;return;}
+    const se=document.getElementById('adminStats');
+    const ap=users.length?Math.round(users.reduce((s,u)=>s+(u.progress&&u.progress.class12?u.progress.class12.physics||0:u.progress&&u.progress.physics||0),0)/users.length):0;
+    const ac=users.length?Math.round(users.reduce((s,u)=>s+(u.progress&&u.progress.class12?u.progress.class12.chemistry||0:u.progress&&u.progress.chemistry||0),0)/users.length):0;
+    const ab=users.length?Math.round(users.reduce((s,u)=>s+(u.progress&&u.progress.class12?u.progress.class12.biology||0:u.progress&&u.progress.biology||0),0)/users.length):0;
+    se.innerHTML='<div class="astat"><span class="asv">'+users.length+'</span><span class="asl">Students</span></div><div class="astat"><span class="asv" style="color:var(--phy)">'+ap+'%</span><span class="asl">Avg Physics</span></div><div class="astat"><span class="asv" style="color:var(--che)">'+ac+'%</span><span class="asl">Avg Chemistry</span></div><div class="astat"><span class="asv" style="color:var(--bio)">'+ab+'%</span><span class="asl">Avg Biology</span></div><div class="astat"><span class="asv">'+Math.round((ap+ac+ab)/3)+'%</span><span class="asl">Avg Overall</span></div>';
+    if(!users.length){body.innerHTML='<tr><td colspan="5" style="text-align:center;padding:48px;color:var(--mu)">No students yet. Share the link!</td></tr>';return}
     body.innerHTML='';
     users.forEach(u=>{
-      const p=u.progress||{physics:0,chemistry:0,biology:0};
-      const joined=u.joined?new Date(u.joined).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'}):'—';
+      const p=u.progress&&u.progress.class12?u.progress.class12:u.progress||{physics:0,chemistry:0,biology:0};
+      const joined=u.joined?new Date(u.joined).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'}):'---';
       const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td><div class="user-row-name">${u.name}</div><div class="user-row-email">${u.email}</div></td>
-        <td><div class="prog-mini"><div class="prog-mini-bar"><div class="prog-mini-fill physics" style="width:${p.physics||0}%"></div></div><span class="prog-mini-val">${p.physics||0}%</span></div></td>
-        <td><div class="prog-mini"><div class="prog-mini-bar"><div class="prog-mini-fill chemistry" style="width:${p.chemistry||0}%"></div></div><span class="prog-mini-val">${p.chemistry||0}%</span></div></td>
-        <td><div class="prog-mini"><div class="prog-mini-bar"><div class="prog-mini-fill biology" style="width:${p.biology||0}%"></div></div><span class="prog-mini-val">${p.biology||0}%</span></div></td>
-        <td><span class="joined-date">${joined}</span></td>`;
+      tr.innerHTML='<td><div class="urnm">'+u.name+'</div><div class="urem">'+u.email+'</div></td><td><div class="pmini"><div class="pbar"><div class="pfill physics" style="width:'+(p.physics||0)+'%"></div></div><span class="pval">'+(p.physics||0)+'%</span></div></td><td><div class="pmini"><div class="pbar"><div class="pfill chemistry" style="width:'+(p.chemistry||0)+'%"></div></div><span class="pval">'+(p.chemistry||0)+'%</span></div></td><td><div class="pmini"><div class="pbar"><div class="pfill biology" style="width:'+(p.biology||0)+'%"></div></div><span class="pval">'+(p.biology||0)+'%</span></div></td><td><span class="jdate">'+joined+'</span></td>';
       body.appendChild(tr);
     });
-  }catch(e){body.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--red);padding:24px;font-size:0.8rem">Failed to load. Check connection.</td></tr>`;}
+  }catch(e){body.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--rd);padding:24px">Failed to load. Check connection.</td></tr>'}
 }
 
 // INIT
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = sessionStorage.getItem('np_user');
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=sessionStorage.getItem('np_user');
   if(saved){
-    try{
-      currentUser = JSON.parse(saved);
-      enterApp(); // shows app instantly, loads data in background
-    } catch(e){
-      sessionStorage.removeItem('np_user');
-      // authPage is already active by default
-      document.getElementById('loginEmail').focus();
-    }
+    try{CU=JSON.parse(saved);enterApp()}
+    catch(e){sessionStorage.removeItem('np_user');document.getElementById('loginEmail').focus()}
   } else {
-    // authPage is already active by default — just focus and init Google
     setTimeout(()=>{
-      if(typeof google !== 'undefined'){
-        google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse,
-          auto_select: false,
-          cancel_on_tap_outside: true
-        });
-      }
-      const emailEl = document.getElementById('loginEmail');
-      if(emailEl) emailEl.focus();
-    }, 500);
+      initGSI();
+      const el=document.getElementById('loginEmail');if(el)el.focus();
+    },500);
   }
 });
 </script>
