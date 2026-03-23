@@ -777,35 +777,32 @@ function setSyncState(s){
 async function loadData(){
   setSyncState('loading');
   try{
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000); // 4 second timeout
-    const r=await fetch(`${GS}?action=readData&email=${encodeURIComponent(currentUser.email)}`, {signal: controller.signal});
-    clearTimeout(timeout);
-    const j=await r.json();
+    const j = await Promise.race([
+      gsFetch(`${GS}?action=readData&email=${encodeURIComponent(currentUser.email)}`),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000))
+    ]);
     if(j.success&&j.data){
       cache.sessions=j.data.sessions||{};
       cache.completed=j.data.completed||{};
-      // Re-render after fresh data loads
       renderMonthGrid();
       updateStats();
     }
     setSyncState('synced');
   }catch(e){
-    // Fallback to localStorage instantly
     cache.sessions=JSON.parse(localStorage.getItem('np_s_'+currentUser.email)||'{}');
     cache.completed=JSON.parse(localStorage.getItem('np_c_'+currentUser.email)||'{}');
     setSyncState('error');
+    console.warn('Load from cache:', e.message);
   }
 }
-
 async function saveData(){
   setSyncState('saving');
   localStorage.setItem('np_s_'+currentUser.email,JSON.stringify(cache.sessions));
   localStorage.setItem('np_c_'+currentUser.email,JSON.stringify(cache.completed));
   try{
-    await fetch(GS,{method:'POST',body:JSON.stringify({action:'saveData',email:currentUser.email,data:{sessions:cache.sessions,completed:cache.completed,progress:getAllProgress()}})});
+    await gsFetch(GS, {method:'POST', body:JSON.stringify({action:'saveData',email:currentUser.email,data:{sessions:cache.sessions,completed:cache.completed,progress:getAllProgress()}})});
     setSyncState('synced');
-  }catch(e){setSyncState('error');}
+  }catch(e){setSyncState('error');console.warn('Save error:',e.message);}
 }
 
 function scheduleSave(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(saveData,900);}
@@ -886,33 +883,32 @@ async function handleGoogleResponse(response) {
 }
 
 async function handleGoogleProfile(email, name, picture) {
-  // Show a small status instead of full loading overlay
   setSyncState('loading');
   try {
-    const controller = new AbortController();
-    setTimeout(() => controller.abort(), 8000);
     // Try login first
-    const loginRes = await fetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}`, {signal: controller.signal});
-    const loginJ = await loginRes.json();
+    const loginJ = await Promise.race([
+      gsFetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}`),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
+    ]);
     if(loginJ.success) {
-      currentUser = {email: loginJ.email, name: loginJ.name, role: loginJ.role, picture};
+      currentUser = {email:loginJ.email, name:loginJ.name, role:loginJ.role, picture};
       sessionStorage.setItem('np_user', JSON.stringify(currentUser));
-      await enterApp();
+      enterApp();
       return;
     }
     // Auto-signup if not found
-    const signupRes = await fetch(`${GS}?action=signup&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}&name=${encodeURIComponent(name)}`);
-    const signupJ = await signupRes.json();
+    const signupJ = await gsFetch(`${GS}?action=signup&email=${encodeURIComponent(email)}&password=GOOGLE_AUTH_${btoa(email)}&name=${encodeURIComponent(name)}`);
     if(signupJ.success) {
-      currentUser = {email: signupJ.email, name: signupJ.name, role: signupJ.role, picture};
+      currentUser = {email:signupJ.email, name:signupJ.name, role:signupJ.role, picture};
       sessionStorage.setItem('np_user', JSON.stringify(currentUser));
-      await enterApp();
+      enterApp();
     } else {
       setSyncState('error');
       alert('Google Sign-In failed: ' + (signupJ.message||'Please try again.'));
     }
   } catch(e) {
     setSyncState('error');
+    console.error('Google auth error:', e);
     alert('Connection error. Please check your internet and try again.');
   }
 }
@@ -927,6 +923,17 @@ function switchAuthTab(tab){
 
 function toggleEye(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
 
+// Helper: fetch from Google Apps Script (handles CORS)
+async function gsFetch(url, options={}){
+  const resp = await fetch(url, {
+    ...options,
+    headers: { 'Content-Type': 'text/plain', ...(options.headers||{}) }
+  });
+  const text = await resp.text();
+  try { return JSON.parse(text); }
+  catch(e) { throw new Error('Invalid response: ' + text.slice(0,100)); }
+}
+
 async function doLogin(){
   const email=document.getElementById('loginEmail').value.trim();
   const pw=document.getElementById('loginPw').value;
@@ -936,11 +943,21 @@ async function doLogin(){
   const btn=document.getElementById('loginBtn');
   btn.disabled=true;btn.textContent='Signing in…';
   try{
-    const r=await fetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pw)}`);
-    const j=await r.json();
-    if(j.success){currentUser={email:j.email,name:j.name,role:j.role};sessionStorage.setItem('np_user',JSON.stringify(currentUser));await enterApp();}
-    else{errEl.textContent=j.message||'Invalid email or password.';errEl.classList.add('show');document.getElementById('loginPw').value='';}
-  }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.add('show');}
+    const j=await gsFetch(`${GS}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pw)}`);
+    if(j.success){
+      currentUser={email:j.email,name:j.name,role:j.role};
+      sessionStorage.setItem('np_user',JSON.stringify(currentUser));
+      enterApp();
+    } else {
+      errEl.textContent=j.message||'Invalid email or password.';
+      errEl.classList.add('show');
+      document.getElementById('loginPw').value='';
+    }
+  }catch(e){
+    errEl.textContent='Connection error. Please check your internet.';
+    errEl.classList.add('show');
+    console.error('Login error:',e);
+  }
   btn.disabled=false;btn.textContent='Sign In →';
 }
 
@@ -956,11 +973,20 @@ async function doSignup(){
   const btn=document.getElementById('signupBtn');
   btn.disabled=true;btn.textContent='Creating account…';
   try{
-    const r=await fetch(`${GS}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pw)}&name=${encodeURIComponent(name)}`);
-    const j=await r.json();
-    if(j.success){currentUser={email:j.email,name:j.name,role:j.role};sessionStorage.setItem('np_user',JSON.stringify(currentUser));await enterApp();}
-    else{errEl.textContent=j.message||'Signup failed. Try again.';errEl.classList.add('show');}
-  }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.add('show');}
+    const j=await gsFetch(`${GS}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pw)}&name=${encodeURIComponent(name)}`);
+    if(j.success){
+      currentUser={email:j.email,name:j.name,role:j.role};
+      sessionStorage.setItem('np_user',JSON.stringify(currentUser));
+      enterApp();
+    } else {
+      errEl.textContent=j.message||'Signup failed. Try again.';
+      errEl.classList.add('show');
+    }
+  }catch(e){
+    errEl.textContent='Connection error. Please check your internet.';
+    errEl.classList.add('show');
+    console.error('Signup error:',e);
+  }
   btn.disabled=false;btn.textContent='Create Account →';
 }
 
@@ -1314,8 +1340,7 @@ async function loadAdminData(){
   const body=document.getElementById('usersBody');
   body.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--muted);font-size:0.82rem;padding:24px">Loading students…</td></tr>`;
   try{
-    const r=await fetch(`${GS}?action=getUsers&email=${encodeURIComponent(ADMIN_EMAIL)}&password=${encodeURIComponent(ADMIN_PASS)}`);
-    const j=await r.json();
+    const j=await gsFetch(`${GS}?action=getUsers&email=${encodeURIComponent(ADMIN_EMAIL)}&password=${encodeURIComponent(ADMIN_PASS)}`);
     if(!j.success){body.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--red);padding:24px;font-size:0.82rem">${j.message}</td></tr>`;return;}
     const users=j.users||[];
     const statsEl=document.getElementById('adminStats');
