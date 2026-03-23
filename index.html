@@ -271,7 +271,7 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
 .joined-date { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted); }
 
 /* LOADING */
-#loadingOverlay { position:fixed; inset:0; z-index:9000; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+#loadingOverlay { display:none; position:fixed; inset:0; z-index:9000; background:var(--bg); flex-direction:column; align-items:center; justify-content:center; gap:16px; }
 .loader-logo { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--gold-light); }
 .loader-bar { width:200px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
 .loader-fill { height:100%; background:var(--gold); border-radius:2px; animation:load 1.5s ease-in-out infinite; }
@@ -325,14 +325,14 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
 <body>
 
 <!-- LOADING -->
-<div id="loadingOverlay">
+<div id="loadingOverlay" style="display:none">
   <div class="loader-logo">NEET 2026</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
   <div class="loader-text">Loading planner…</div>
 </div>
 
 <!-- AUTH -->
-<div class="page" id="authPage">
+<div class="page active" id="authPage">
   <div class="auth-bg"></div>
   <div class="auth-grid">
     <div class="auth-left">
@@ -977,7 +977,6 @@ function doLogout(){
 // APP ENTRY
 async function enterApp(){
   document.getElementById('authPage').classList.remove('active');
-  document.getElementById('loadingOverlay').style.display='none';
   document.getElementById('appShell').style.display='block';
   // Restore class preference
   curClass = sessionStorage.getItem('np_class') || 'class12';
@@ -1349,21 +1348,18 @@ async function loadAdminData(){
 
 // INIT
 window.addEventListener('DOMContentLoaded', () => {
-  // Hide loading overlay IMMEDIATELY — never block on network
-  document.getElementById('loadingOverlay').style.display = 'none';
-
   const saved = sessionStorage.getItem('np_user');
   if(saved){
     try{
       currentUser = JSON.parse(saved);
-      enterApp(); // not awaited — enterApp is synchronous for display, async for data
+      enterApp(); // shows app instantly, loads data in background
     } catch(e){
       sessionStorage.removeItem('np_user');
-      document.getElementById('authPage').classList.add('active');
+      // authPage is already active by default
       document.getElementById('loginEmail').focus();
     }
   } else {
-    document.getElementById('authPage').classList.add('active');
+    // authPage is already active by default — just focus and init Google
     setTimeout(()=>{
       if(typeof google !== 'undefined'){
         google.accounts.id.initialize({
