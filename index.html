@@ -293,6 +293,11 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
+/* CLASS SELECTOR BUTTONS */
+.cls-btn { padding:7px 18px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.83rem; font-weight:600; transition:all 0.2s; }
+.cls-btn.active { border-color:var(--gold) !important; background:var(--gold-dim) !important; color:var(--gold) !important; }
+.cls-btn:hover:not(.active) { border-color:var(--border2); color:var(--text2); }
+
 /* GOOGLE BTN */
 .google-btn {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -403,7 +408,7 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
   <!-- HOME -->
   <div class="page" id="homePage">
     <div class="home-hero">
-      <div class="home-hero-text"><h2>Hello, <span class="hi" id="greetNm"></span> 👋</h2><p>Select an academic year and month to plan</p></div>
+      <div class="home-hero-text"><h2>Hello, <span class="hi" id="greetNm"></span> 👋</h2><p>Select your class, academic year and month to plan</p></div>
       <div class="stats-row">
         <div class="stat-card p"><span class="stat-val" id="statP">0%</span><span class="stat-lbl">Physics</span></div>
         <div class="stat-card c"><span class="stat-val" id="statC">0%</span><span class="stat-lbl">Chemistry</span></div>
@@ -411,6 +416,12 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
       </div>
     </div>
     <div class="section-wrap">
+      <!-- Class Selector -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Class</div>
+        <button id="cls11Btn" class="cls-btn" onclick="switchClass('class11')">Class 11</button>
+        <button id="cls12Btn" class="cls-btn active" onclick="switchClass('class12')">Class 12</button>
+      </div>
       <!-- Academic Year Selector -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
         <div class="section-label" style="margin-bottom:0" id="ayLabel">Academic Year 2026–27</div>
@@ -443,6 +454,11 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
   <div class="page" id="sylPage">
     <div class="syl-header">
       <div class="page-title">Syllabus Tracker</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Class</div>
+        <button id="sylCls11Btn" class="cls-btn" onclick="switchClassSyl('class11')">Class 11</button>
+        <button id="sylCls12Btn" class="cls-btn active" onclick="switchClassSyl('class12')">Class 12</button>
+      </div>
       <div class="sub-tabs">
         <button class="sub-tab active physics" onclick="switchSub('physics')">⚡ Physics</button>
         <button class="sub-tab chemistry" onclick="switchSub('chemistry')">🧪 Chemistry</button>
@@ -498,11 +514,178 @@ const ADMIN_EMAIL = 'jhasnehil525@gmail.com';
 const ADMIN_PASS  = 'Snehil@admin2026';
 
 const SYLLABUS = {
-  physics:[
-    {unit:"Unit I – Electrostatics",chapters:[
-      {name:"Ch 1: Electric Charges and Fields",topics:["Electric charges","Conservation of charge","Coulomb's law","Superposition principle","Electric field","Electric field lines","Electric flux","Gauss's theorem","Applications of Gauss's theorem"]},
-      {name:"Ch 2: Electrostatic Potential and Capacitance",topics:["Electric potential","Potential due to point charge","Potential due to dipole","Equipotential surfaces","Relation between field and potential","Potential energy","Conductors and insulators","Dielectrics","Capacitors","Combination of capacitors","Energy in capacitor"]}
-    ]},
+  class12: {
+    physics:[
+      {unit:"Unit I – Electrostatics",chapters:[
+        {name:"Ch 1: Electric Charges and Fields",topics:["Electric charges","Conservation of charge","Coulomb's law","Superposition principle","Electric field","Electric field lines","Electric flux","Gauss's theorem","Applications of Gauss's theorem"]},
+        {name:"Ch 2: Electrostatic Potential and Capacitance",topics:["Electric potential","Potential due to point charge","Potential due to dipole","Equipotential surfaces","Relation between field and potential","Potential energy","Conductors and insulators","Dielectrics","Capacitors","Combination of capacitors","Energy in capacitor"]}
+      ]},
+      {unit:"Unit II – Current Electricity",chapters:[
+        {name:"Ch 3: Current Electricity",topics:["Electric current","Drift velocity","Ohm's law","Resistance and resistivity","Temperature dependence","Electrical power","Series and parallel resistors","EMF and internal resistance","Kirchhoff's laws","Wheatstone bridge","Potentiometer"]}
+      ]},
+      {unit:"Unit III – Magnetic Effects",chapters:[
+        {name:"Ch 4: Moving Charges and Magnetism",topics:["Magnetic force","Motion in magnetic field","Biot-Savart law","Circular loop field","Ampere's law","Force between parallel wires","Torque on current loop","Galvanometer"]},
+        {name:"Ch 5: Magnetism and Matter",topics:["Bar magnet","Magnetic field lines","Earth's magnetism","Diamagnetism","Paramagnetism","Ferromagnetism","Electromagnets"]}
+      ]},
+      {unit:"Unit IV – EM Induction & AC",chapters:[
+        {name:"Ch 6: Electromagnetic Induction",topics:["Faraday's laws","Lenz's law","Motional EMF","Self-inductance","Mutual inductance","AC generator"]},
+        {name:"Ch 7: Alternating Current",topics:["AC voltage and current","Phasors","AC through R, L, C","LC oscillations","LCR series circuit","Resonance","Power in AC circuit","Transformers"]}
+      ]},
+      {unit:"Unit V – EM Waves",chapters:[
+        {name:"Ch 8: Electromagnetic Waves",topics:["Displacement current","Maxwell's equations","EM wave properties","EM spectrum","Uses of EM waves"]}
+      ]},
+      {unit:"Unit VI – Optics",chapters:[
+        {name:"Ch 9: Ray Optics",topics:["Reflection at spherical mirrors","Refraction","Total internal reflection","Refraction at spherical surfaces","Lenses","Lens maker's equation","Prism refraction","Scattering","Eye","Microscope","Telescope"]},
+        {name:"Ch 10: Wave Optics",topics:["Wavefront","Huygens principle","Coherent sources","Young's double slit","Interference","Diffraction","Single slit diffraction","Polarisation","Malus's law","Brewster's law"]}
+      ]},
+      {unit:"Unit VII – Dual Nature",chapters:[
+        {name:"Ch 11: Dual Nature of Radiation and Matter",topics:["Photoelectric effect","Einstein's equation","Particle nature of light","de Broglie hypothesis","Davisson-Germer experiment"]}
+      ]},
+      {unit:"Unit VIII – Atoms & Nuclei",chapters:[
+        {name:"Ch 12: Atoms",topics:["Alpha-particle scattering","Rutherford model","Bohr model","Energy levels","Hydrogen spectrum"]},
+        {name:"Ch 13: Nuclei",topics:["Nuclear size","Binding energy","Nuclear force","Radioactivity","Alpha decay","Beta decay","Gamma decay","Nuclear fission","Nuclear fusion"]}
+      ]},
+      {unit:"Unit IX – Electronic Devices",chapters:[
+        {name:"Ch 14: Semiconductor Electronics",topics:["Energy bands","Intrinsic semiconductor","Extrinsic semiconductor","p-n junction","Rectifiers","Zener diode","LED","Solar cell","Transistor","Logic gates"]}
+      ]}
+    ],
+    chemistry:[
+      {unit:"Unit 1 – Solutions",chapters:[{name:"Solutions",topics:["Types of solutions","Concentration expressions","Solubility of gases","Raoult's law","Relative lowering of vapour pressure","Elevation of boiling point","Depression of freezing point","Osmotic pressure","Abnormal molecular mass","Van't Hoff factor"]}]},
+      {unit:"Unit 2 – Electrochemistry",chapters:[{name:"Electrochemistry",topics:["Redox reactions","EMF of a cell","Standard electrode potential","Nernst equation","Gibbs energy and EMF","Conductance","Specific and molar conductivity","Kohlrausch's Law","Electrolysis","Galvanic cells","Lead accumulator","Fuel cells","Corrosion"]}]},
+      {unit:"Unit 3 – Chemical Kinetics",chapters:[{name:"Chemical Kinetics",topics:["Rate of reaction","Factors affecting rate","Order and molecularity","Rate law","Zero order reactions","First order reactions","Half-life","Collision theory","Activation energy","Arrhenius equation"]}]},
+      {unit:"Unit 4 – d and f Block",chapters:[{name:"d and f Block Elements",topics:["Electronic config of transition metals","Properties of transition metals","Oxidation states","Colour of compounds","Catalytic property","Magnetic properties","K₂Cr₂O₇","KMnO₄","Lanthanides","Actinides"]}]},
+      {unit:"Unit 5 – Coordination Compounds",chapters:[{name:"Coordination Compounds",topics:["Ligands and coordination number","IUPAC nomenclature","Werner's theory","Valence Bond Theory","Crystal Field Theory","Colour and magnetic properties","Stereoisomerism"]}]},
+      {unit:"Unit 6 – Haloalkanes & Haloarenes",chapters:[{name:"Haloalkanes and Haloarenes",topics:["Nomenclature","Nature of C–X bond","Physical properties","Chemical properties","Optical rotation","Substitution reactions","Environmental effects"]}]},
+      {unit:"Unit 7 – Alcohols, Phenols & Ethers",chapters:[{name:"Alcohols, Phenols and Ethers",topics:["Nomenclature of alcohols","Preparation of alcohols","Properties of alcohols","Mechanism of dehydration","Nomenclature of phenols","Acidic nature of phenol","Electrophilic substitution","Nomenclature of ethers","Preparation of ethers","Properties of ethers"]}]},
+      {unit:"Unit 8 – Aldehydes, Ketones & Acids",chapters:[{name:"Aldehydes and Ketones",topics:["Nomenclature","Carbonyl group","Preparation","Properties","Nucleophilic addition","Reactivity of alpha hydrogen"]},{name:"Carboxylic Acids",topics:["Nomenclature","Acidic nature","Preparation","Physical properties","Chemical properties"]}]},
+      {unit:"Unit 9 – Amines",chapters:[{name:"Amines",topics:["Nomenclature and classification","Structure","Preparation","Physical and chemical properties","Identification of amines"]},{name:"Diazonium Salts",topics:["Preparation","Chemical reactions","Importance in organic synthesis"]}]},
+      {unit:"Unit 10 – Biomolecules",chapters:[{name:"Biomolecules",topics:["Carbohydrates – classification","Monosaccharides","Oligosaccharides","Polysaccharides","Proteins and amino acids","Peptide bond","Protein structure","Denaturation","Enzymes","Vitamins","Nucleic Acids"]}]}
+    ],
+    biology:[
+      {unit:"Unit VI – Reproduction",chapters:[
+        {name:"Ch 2: Sexual Reproduction in Flowering Plants",topics:["Flower structure","Male gametophyte","Female gametophyte","Types of pollination","Pollination agencies","Out breeding devices","Pollen-pistil interaction","Double fertilization","Endosperm and embryo development","Seed and fruit development","Apomixis","Parthenocarpy","Polyembryony"]},
+        {name:"Ch 3: Human Reproduction",topics:["Male reproductive system","Female reproductive system","Spermatogenesis","Oogenesis","Menstrual cycle","Fertilization","Embryo development","Implantation","Pregnancy and placenta","Parturition","Lactation"]},
+        {name:"Ch 4: Reproductive Health",topics:["Need for reproductive health","STDs and prevention","Birth control methods","Contraception","MTP","Amniocentesis","Infertility","IVF, ZIFT, GIFT"]}
+      ]},
+      {unit:"Unit VII – Genetics & Evolution",chapters:[
+        {name:"Ch 5: Principles of Inheritance and Variation",topics:["Mendelian inheritance","Incomplete dominance","Co-dominance","Multiple alleles and blood groups","Pleiotropy","Polygenic inheritance","Chromosome theory","Sex determination","Linkage and crossing over","Haemophilia","Colour blindness","Thalassemia","Down's syndrome","Turner's syndrome","Klinefelter's syndrome"]},
+        {name:"Ch 6: Molecular Basis of Inheritance",topics:["DNA as genetic material","Structure of DNA","Structure of RNA","DNA packaging","DNA replication","Central Dogma","Transcription","Genetic code","Translation","lac operon","Human genome project","DNA fingerprinting"]},
+        {name:"Ch 7: Evolution",topics:["Origin of life","Evidence for evolution","Darwin's contribution","Modern synthetic theory","Mutation and recombination","Natural selection","Gene flow and genetic drift","Hardy-Weinberg principle","Adaptive radiation","Human evolution"]}
+      ]},
+      {unit:"Unit VIII – Biology & Human Welfare",chapters:[
+        {name:"Ch 8: Human Health and Diseases",topics:["Pathogens and parasites","Malaria","Dengue and Chikungunya","Filariasis","Ascariasis","Typhoid","Pneumonia","Common cold","Amoebiasis","Ringworm","Basic immunology","Vaccines","Cancer","HIV and AIDS","Drug and alcohol abuse"]},
+        {name:"Ch 10: Microbes in Human Welfare",topics:["Microbes in food processing","Industrial production","Sewage treatment","Energy generation","Bio-control agents","Bio-fertilizers","Antibiotics"]}
+      ]},
+      {unit:"Unit IX – Biotechnology",chapters:[
+        {name:"Ch 11: Biotechnology – Principles",topics:["Recombinant DNA technology","Tools of rDNA technology","Processes in rDNA technology"]},
+        {name:"Ch 12: Biotechnology – Applications",topics:["Human insulin production","Vaccine production","Stem cell technology","Gene therapy","GMOs and Bt crops","Transgenic animals","Biosafety issues","Biopiracy and patents"]}
+      ]},
+      {unit:"Unit X – Ecology & Environment",chapters:[
+        {name:"Ch 13: Organisms and Populations",topics:["Mutualism","Competition","Predation","Parasitism","Population attributes","Population growth","Birth and death rate","Age distribution"]},
+        {name:"Ch 14: Ecosystem",topics:["Ecosystem patterns","Components","Productivity","Decomposition","Energy flow","Pyramids of number","Pyramids of biomass","Pyramids of energy"]},
+        {name:"Ch 15: Biodiversity and Conservation",topics:["Biodiversity concept","Patterns of biodiversity","Importance","Loss of biodiversity","Hotspots","Endangered organisms","Extinction","Red Data Book","Biosphere reserves","National parks","Wildlife sanctuaries","Ramsar sites"]}
+      ]}
+    ]
+  },
+  class11: {
+    physics:[
+      {unit:"Unit I – Physical World & Measurement",chapters:[
+        {name:"Ch 1: Units and Measurements",topics:["Need for measurement","Units of measurement","Systems of units","SI units","Fundamental and derived units","Significant figures","Dimensions of physical quantities","Dimensional analysis","Applications of dimensional analysis"]}
+      ]},
+      {unit:"Unit II – Kinematics",chapters:[
+        {name:"Ch 2: Motion in a Straight Line",topics:["Frame of reference","Motion in a straight line","Uniform and non-uniform motion","Instantaneous velocity","Uniformly accelerated motion","Velocity-time graphs","Position-time graphs","Relations for uniformly accelerated motion"]},
+        {name:"Ch 3: Motion in a Plane",topics:["Scalar and vector quantities","Position and displacement vectors","Addition and subtraction of vectors","Unit vector","Resolution of a vector","Rectangular components","Scalar and vector product","Projectile motion","Uniform circular motion"]}
+      ]},
+      {unit:"Unit III – Laws of Motion",chapters:[
+        {name:"Ch 4: Laws of Motion",topics:["Concept of force","Inertia","Newton's first law","Momentum and Newton's second law","Impulse","Newton's third law","Conservation of linear momentum","Equilibrium of concurrent forces","Static and kinetic friction","Laws of friction","Rolling friction","Centripetal force","Circular motion examples"]}
+      ]},
+      {unit:"Unit IV – Work, Energy & Power",chapters:[
+        {name:"Ch 5: Work, Energy and Power",topics:["Work done by constant force","Work done by variable force","Kinetic energy","Work-energy theorem","Power","Potential energy","Spring potential energy","Conservative forces","Motion in a vertical circle","Elastic collisions","Inelastic collisions"]}
+      ]},
+      {unit:"Unit V – Motion of System of Particles",chapters:[
+        {name:"Ch 6: System of Particles and Rotational Motion",topics:["Centre of mass","Momentum conservation","Centre of mass of rigid body","Torque","Angular momentum","Conservation of angular momentum","Equilibrium of rigid bodies","Rotational motion equations","Moment of inertia","Radius of gyration"]}
+      ]},
+      {unit:"Unit VI – Gravitation",chapters:[
+        {name:"Ch 7: Gravitation",topics:["Kepler's laws","Universal law of gravitation","Acceleration due to gravity","Variation with altitude and depth","Gravitational potential energy","Gravitational potential","Escape speed","Orbital velocity of satellite"]}
+      ]},
+      {unit:"Unit VII – Properties of Bulk Matter",chapters:[
+        {name:"Ch 8: Mechanical Properties of Solids",topics:["Elasticity","Stress-strain relationship","Hooke's law","Young's modulus","Bulk modulus","Shear modulus","Poisson's ratio","Elastic energy"]},
+        {name:"Ch 9: Mechanical Properties of Fluids",topics:["Pressure in a fluid column","Pascal's law","Hydraulic lift","Viscosity","Stokes' law","Terminal velocity","Streamlined flow","Turbulent flow","Bernoulli's theorem","Surface tension","Angle of contact","Capillary rise"]},
+        {name:"Ch 10: Thermal Properties of Matter",topics:["Heat and temperature","Thermal expansion of solids","Thermal expansion of liquids","Thermal expansion of gases","Anomalous expansion of water","Specific heat capacity","Calorimetry","Change of state","Latent heat","Heat conduction","Heat convection","Heat radiation","Stefan's law","Wien's law"]}
+      ]},
+      {unit:"Unit VIII – Thermodynamics",chapters:[
+        {name:"Ch 11: Thermodynamics",topics:["Thermal equilibrium","Zeroth law of thermodynamics","Internal energy","First law of thermodynamics","Second law of thermodynamics","Isothermal process","Adiabatic process","Reversible and irreversible processes","Cyclic processes"]}
+      ]},
+      {unit:"Unit IX – Kinetic Theory",chapters:[
+        {name:"Ch 12: Kinetic Theory",topics:["Equation of state of perfect gas","Kinetic theory of gases","Concept of pressure","Kinetic interpretation of temperature","RMS speed","Degrees of freedom","Law of equipartition of energy","Specific heat capacities of gases","Mean free path","Avogadro's number"]}
+      ]},
+      {unit:"Unit X – Oscillations & Waves",chapters:[
+        {name:"Ch 13: Oscillations",topics:["Periodic motion","Period and frequency","Simple harmonic motion","SHM equations","Phase","Oscillations of a spring","Energy in SHM","Simple pendulum"]},
+        {name:"Ch 14: Waves",topics:["Wave motion","Transverse and longitudinal waves","Speed of wave","Displacement relation for progressive wave","Principle of superposition","Reflection of waves","Standing waves in strings","Standing waves in organ pipes","Fundamental mode and harmonics","Beats"]}
+      ]}
+    ],
+    chemistry:[
+      {unit:"Unit I – Some Basic Concepts",chapters:[
+        {name:"Some Basic Concepts of Chemistry",topics:["General introduction to chemistry","Laws of chemical combination","Dalton's atomic theory","Atomic and molecular masses","Mole concept","Molar mass","Chemical reactions","Stoichiometry","Stoichiometric calculations"]}
+      ]},
+      {unit:"Unit II – Structure of Atom",chapters:[
+        {name:"Structure of Atom",topics:["Discovery of subatomic particles","Atomic number","Isotopes and isobars","Thomson model","Rutherford model","Bohr model","Dual nature of matter","de Broglie relation","Heisenberg uncertainty principle","Quantum numbers","Shapes of orbitals","Aufbau principle","Pauli exclusion principle","Hund's rule","Electronic configuration"]}
+      ]},
+      {unit:"Unit III – Classification of Elements",chapters:[
+        {name:"Classification of Elements and Periodicity",topics:["Modern periodic law","Long form of periodic table","Periodic trends in properties","Atomic radii","Ionic radii","Ionisation enthalpy","Electron gain enthalpy","Electronegativity","Valency"]}
+      ]},
+      {unit:"Unit IV – Chemical Bonding",chapters:[
+        {name:"Chemical Bonding and Molecular Structure",topics:["Valence electrons","Ionic bond","Covalent bond","Bond parameters","Lewis structures","VSEPR theory","Hybridization – sp, sp2, sp3","Molecular orbital theory","Bonding and antibonding orbitals","Hydrogen bonding"]}
+      ]},
+      {unit:"Unit V – Chemical Thermodynamics",chapters:[
+        {name:"Chemical Thermodynamics",topics:["Systems and surroundings","Work, heat and energy","State functions","First law of thermodynamics","Internal energy","Enthalpy","Heat capacity","Hess's law","Enthalpy of bond dissociation","Enthalpy of combustion","Enthalpy of formation","Second law – entropy","Third law of thermodynamics"]}
+      ]},
+      {unit:"Unit VI – Equilibrium",chapters:[
+        {name:"Equilibrium",topics:["Physical equilibrium","Chemical equilibrium","Law of mass action","Equilibrium constant Kp and Kc","Le Chatelier's principle","Ionic equilibrium","Strong and weak electrolytes","Degree of ionization","pH","Buffer solutions","Hydrolysis of salts","Solubility product","Common ion effect"]}
+      ]},
+      {unit:"Unit VII – Redox Reactions",chapters:[
+        {name:"Redox Reactions",topics:["Oxidation and reduction","Oxidation number","Balancing redox reactions by oxidation number method","Balancing by half-reaction method"]}
+      ]},
+      {unit:"Unit VIII – Organic Chemistry Basics",chapters:[
+        {name:"Organic Chemistry – Basic Principles and Techniques",topics:["Introduction to organic chemistry","Purification methods","Classification of organic compounds","IUPAC nomenclature","Inductive effect","Electromeric effect","Resonance","Hyperconjugation","Homolytic fission","Heterolytic fission","Free radicals","Carbocations","Carbanions","Electrophiles and nucleophiles","Types of organic reactions"]}
+      ]},
+      {unit:"Unit IX – Hydrocarbons",chapters:[
+        {name:"Hydrocarbons",topics:["Classification of hydrocarbons","Nomenclature","Isomerism","Conformation of alkanes","Physical properties of alkanes","Halogenation of alkanes","Combustion of alkanes","Pyrolysis","Alkenes – structure and preparation","Addition reactions of alkenes","Alkynes – structure and preparation","Addition reactions of alkynes","Benzene – structure","Electrophilic substitution in benzene"]}
+      ]}
+    ],
+    biology:[
+      {unit:"Unit I – Diversity of Living Organisms",chapters:[
+        {name:"Ch 1: The Living World",topics:["Biodiversity","Need for classification","Three domains of life","Taxonomy and systematics","Species concept","Taxonomical hierarchy","Binomial nomenclature"]},
+        {name:"Ch 2: Biological Classification",topics:["Five kingdom classification","Monera – salient features","Protista – salient features","Fungi – salient features","Lichens","Viruses","Viroids"]},
+        {name:"Ch 3: Plant Kingdom",topics:["Classification of plants","Algae – salient features","Bryophyta – salient features","Pteridophyta – salient features","Gymnospermae – salient features","Plant life cycle","Alternation of generations"]},
+        {name:"Ch 4: Animal Kingdom",topics:["Basis of classification","Non-chordates up to phylum level","Chordates up to class level"]}
+      ]},
+      {unit:"Unit II – Structural Organisation",chapters:[
+        {name:"Ch 5: Morphology of Flowering Plants",topics:["Morphology of root","Morphology of stem","Morphology of leaf","Inflorescence","Flower morphology","Fruit","Seed","Description of family Solanaceae"]},
+        {name:"Ch 6: Anatomy of Flowering Plants",topics:["Anatomy of tissue systems","Tissue systems in dicots","Tissue systems in monocots"]},
+        {name:"Ch 7: Structural Organisation in Animals",topics:["Morphology of frog","Digestive system of frog","Circulatory system of frog","Respiratory system of frog","Nervous system of frog","Reproductive system of frog"]}
+      ]},
+      {unit:"Unit III – Cell: Structure and Function",chapters:[
+        {name:"Ch 8: Cell – The Unit of Life",topics:["Cell theory","Prokaryotic cell","Eukaryotic cell","Cell envelope","Cell membrane","Cell wall","Endoplasmic reticulum","Golgi bodies","Lysosomes","Vacuoles","Mitochondria","Ribosomes","Plastids","Microbodies","Cytoskeleton","Cilia and flagella","Centrioles","Nucleus"]},
+        {name:"Ch 9: Biomolecules",topics:["Chemical constituents of living cells","Structure and function of proteins","Carbohydrates","Lipids","Nucleic acids","Enzyme types","Enzyme properties","Enzyme action"]},
+        {name:"Ch 10: Cell Cycle and Cell Division",topics:["Cell cycle","Mitosis – phases","Mitosis – significance","Meiosis – phases","Meiosis – significance"]}
+      ]},
+      {unit:"Unit IV – Plant Physiology",chapters:[
+        {name:"Ch 11: Photosynthesis in Higher Plants",topics:["Autotrophic nutrition","Site of photosynthesis","Photosynthetic pigments","Photochemical phase","Biosynthetic phase","Cyclic photophosphorylation","Non-cyclic photophosphorylation","Chemiosmotic hypothesis","Photorespiration","C3 pathway","C4 pathway","Factors affecting photosynthesis"]},
+        {name:"Ch 12: Respiration in Plants",topics:["Exchange of gases","Glycolysis","Fermentation","TCA cycle","Electron transport system","ATP generation","Amphibolic pathways","Respiratory quotient"]},
+        {name:"Ch 13: Plant Growth and Development",topics:["Seed germination","Phases of plant growth","Plant growth rate","Conditions of growth","Differentiation","Dedifferentiation","Redifferentiation","Auxin","Gibberellin","Cytokinin","Ethylene","ABA"]}
+      ]},
+      {unit:"Unit V – Human Physiology",chapters:[
+        {name:"Ch 14: Breathing and Exchange of Gases",topics:["Respiratory organs in animals","Respiratory system in humans","Mechanism of breathing","Regulation of respiration","Gas exchange","Transport of gases","Respiratory volumes","Asthma","Emphysema","Occupational respiratory disorders"]},
+        {name:"Ch 15: Body Fluids and Circulation",topics:["Composition of blood","Blood groups","Coagulation of blood","Lymph and its function","Structure of human heart","Blood vessels","Cardiac cycle","Cardiac output","ECG","Double circulation","Regulation of cardiac activity","Hypertension","Coronary artery disease","Angina pectoris","Heart failure"]},
+        {name:"Ch 16: Excretory Products and Elimination",topics:["Modes of excretion","Human excretory system","Urine formation","Osmoregulation","Regulation of kidney function","Uremia","Renal failure","Renal calculi","Nephritis","Dialysis","Kidney transplant"]},
+        {name:"Ch 17: Locomotion and Movement",topics:["Types of movement","Skeletal muscle","Contractile proteins","Muscle contraction","Skeletal system","Joints","Myasthenia gravis","Tetany","Muscular dystrophy","Arthritis","Osteoporosis","Gout"]},
+        {name:"Ch 18: Neural Control and Coordination",topics:["Neuron and nerves","Central nervous system","Peripheral nervous system","Visceral nervous system","Generation of nerve impulse","Conduction of nerve impulse"]},
+        {name:"Ch 19: Chemical Coordination and Integration",topics:["Endocrine glands and hormones","Hypothalamus","Pituitary gland","Pineal gland","Thyroid gland","Parathyroid gland","Adrenal gland","Pancreas","Gonads","Mechanism of hormone action","Disorders – dwarfism, acromegaly, cretinism, goiter, diabetes"]}
+      ]}
+    ]
+  }
+};
     {unit:"Unit II – Current Electricity",chapters:[
       {name:"Ch 3: Current Electricity",topics:["Electric current","Drift velocity","Ohm's law","Resistance and resistivity","Temperature dependence","Electrical power","Series and parallel resistors","EMF and internal resistance","Kirchhoff's laws","Wheatstone bridge","Potentiometer"]}
     ]},
@@ -531,44 +714,7 @@ const SYLLABUS = {
     {unit:"Unit IX – Electronic Devices",chapters:[
       {name:"Ch 14: Semiconductor Electronics",topics:["Energy bands","Intrinsic semiconductor","Extrinsic semiconductor","p-n junction","Rectifiers","Zener diode","LED","Solar cell","Transistor","Logic gates"]}
     ]}
-  ],
-  chemistry:[
-    {unit:"Unit 1 – Solutions",chapters:[{name:"Solutions",topics:["Types of solutions","Concentration expressions","Solubility of gases","Raoult's law","Relative lowering of vapour pressure","Elevation of boiling point","Depression of freezing point","Osmotic pressure","Abnormal molecular mass","Van't Hoff factor"]}]},
-    {unit:"Unit 2 – Electrochemistry",chapters:[{name:"Electrochemistry",topics:["Redox reactions","EMF of a cell","Standard electrode potential","Nernst equation","Gibbs energy and EMF","Conductance","Specific and molar conductivity","Kohlrausch's Law","Electrolysis","Galvanic cells","Lead accumulator","Fuel cells","Corrosion"]}]},
-    {unit:"Unit 3 – Chemical Kinetics",chapters:[{name:"Chemical Kinetics",topics:["Rate of reaction","Factors affecting rate","Order and molecularity","Rate law","Zero order reactions","First order reactions","Half-life","Collision theory","Activation energy","Arrhenius equation"]}]},
-    {unit:"Unit 4 – d and f Block",chapters:[{name:"d and f Block Elements",topics:["Electronic config of transition metals","Properties of transition metals","Oxidation states","Colour of compounds","Catalytic property","Magnetic properties","K₂Cr₂O₇","KMnO₄","Lanthanides","Actinides"]}]},
-    {unit:"Unit 5 – Coordination Compounds",chapters:[{name:"Coordination Compounds",topics:["Ligands and coordination number","IUPAC nomenclature","Werner's theory","Valence Bond Theory","Crystal Field Theory","Colour and magnetic properties","Stereoisomerism"]}]},
-    {unit:"Unit 6 – Haloalkanes & Haloarenes",chapters:[{name:"Haloalkanes and Haloarenes",topics:["Nomenclature","Nature of C–X bond","Physical properties","Chemical properties","Optical rotation","Substitution reactions","Environmental effects"]}]},
-    {unit:"Unit 7 – Alcohols, Phenols & Ethers",chapters:[{name:"Alcohols, Phenols and Ethers",topics:["Nomenclature of alcohols","Preparation of alcohols","Properties of alcohols","Mechanism of dehydration","Nomenclature of phenols","Acidic nature of phenol","Electrophilic substitution","Nomenclature of ethers","Preparation of ethers","Properties of ethers"]}]},
-    {unit:"Unit 8 – Aldehydes, Ketones & Acids",chapters:[{name:"Aldehydes and Ketones",topics:["Nomenclature","Carbonyl group","Preparation","Properties","Nucleophilic addition","Reactivity of alpha hydrogen"]},{name:"Carboxylic Acids",topics:["Nomenclature","Acidic nature","Preparation","Physical properties","Chemical properties"]}]},
-    {unit:"Unit 9 – Amines",chapters:[{name:"Amines",topics:["Nomenclature and classification","Structure","Preparation","Physical and chemical properties","Identification of amines"]},{name:"Diazonium Salts",topics:["Preparation","Chemical reactions","Importance in organic synthesis"]}]},
-    {unit:"Unit 10 – Biomolecules",chapters:[{name:"Biomolecules",topics:["Carbohydrates – classification","Monosaccharides","Oligosaccharides","Polysaccharides","Proteins and amino acids","Peptide bond","Protein structure","Denaturation","Enzymes","Vitamins","Nucleic Acids"]}]}
-  ],
-  biology:[
-    {unit:"Unit VI – Reproduction",chapters:[
-      {name:"Ch 2: Sexual Reproduction in Flowering Plants",topics:["Flower structure","Male gametophyte","Female gametophyte","Types of pollination","Pollination agencies","Out breeding devices","Pollen-pistil interaction","Double fertilization","Endosperm and embryo development","Seed and fruit development","Apomixis","Parthenocarpy","Polyembryony"]},
-      {name:"Ch 3: Human Reproduction",topics:["Male reproductive system","Female reproductive system","Spermatogenesis","Oogenesis","Menstrual cycle","Fertilization","Embryo development","Implantation","Pregnancy and placenta","Parturition","Lactation"]},
-      {name:"Ch 4: Reproductive Health",topics:["Need for reproductive health","STDs and prevention","Birth control methods","Contraception","MTP","Amniocentesis","Infertility","IVF, ZIFT, GIFT"]}
-    ]},
-    {unit:"Unit VII – Genetics & Evolution",chapters:[
-      {name:"Ch 5: Principles of Inheritance and Variation",topics:["Mendelian inheritance","Incomplete dominance","Co-dominance","Multiple alleles and blood groups","Pleiotropy","Polygenic inheritance","Chromosome theory","Sex determination","Linkage and crossing over","Haemophilia","Colour blindness","Thalassemia","Down's syndrome","Turner's syndrome","Klinefelter's syndrome"]},
-      {name:"Ch 6: Molecular Basis of Inheritance",topics:["DNA as genetic material","Structure of DNA","Structure of RNA","DNA packaging","DNA replication","Central Dogma","Transcription","Genetic code","Translation","lac operon","Human genome project","DNA fingerprinting"]},
-      {name:"Ch 7: Evolution",topics:["Origin of life","Evidence for evolution","Darwin's contribution","Modern synthetic theory","Mutation and recombination","Natural selection","Gene flow and genetic drift","Hardy-Weinberg principle","Adaptive radiation","Human evolution"]}
-    ]},
-    {unit:"Unit VIII – Biology & Human Welfare",chapters:[
-      {name:"Ch 8: Human Health and Diseases",topics:["Pathogens and parasites","Malaria","Dengue and Chikungunya","Filariasis","Ascariasis","Typhoid","Pneumonia","Common cold","Amoebiasis","Ringworm","Basic immunology","Vaccines","Cancer","HIV and AIDS","Drug and alcohol abuse"]},
-      {name:"Ch 10: Microbes in Human Welfare",topics:["Microbes in food processing","Industrial production","Sewage treatment","Energy generation","Bio-control agents","Bio-fertilizers","Antibiotics"]}
-    ]},
-    {unit:"Unit IX – Biotechnology",chapters:[
-      {name:"Ch 11: Biotechnology – Principles",topics:["Recombinant DNA technology","Tools of rDNA technology","Processes in rDNA technology"]},
-      {name:"Ch 12: Biotechnology – Applications",topics:["Human insulin production","Vaccine production","Stem cell technology","Gene therapy","GMOs and Bt crops","Transgenic animals","Biosafety issues","Biopiracy and patents"]}
-    ]},
-    {unit:"Unit X – Ecology & Environment",chapters:[
-      {name:"Ch 13: Organisms and Populations",topics:["Mutualism","Competition","Predation","Parasitism","Population attributes","Population growth","Birth and death rate","Age distribution"]},
-      {name:"Ch 14: Ecosystem",topics:["Ecosystem patterns","Components","Productivity","Decomposition","Energy flow","Pyramids of number","Pyramids of biomass","Pyramids of energy"]},
-      {name:"Ch 15: Biodiversity and Conservation",topics:["Biodiversity concept","Patterns of biodiversity","Importance","Loss of biodiversity","Hotspots","Endangered organisms","Extinction","Red Data Book","Biosphere reserves","National parks","Wildlife sanctuaries","Ramsar sites"]}
-    ]}
-  ]
+
 };
 
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -609,12 +755,16 @@ function makeDayKey(ayYear, ayMonthIdx, day){
 let currentUser=null;
 let cache={sessions:{},completed:{}};
 let syncTimer=null;
-let curAY=AY_START; // current academic year
-let curMonth=null;  // index 0-11 in AY_MONTHS
+let curAY=AY_START;
+let curMonth=null;
 let curDay=null;
 let curSub='physics';
+let curClass='class12'; // 'class11' or 'class12'
 let navStack=[];
 let unitExp={},topicExp={};
+
+// Helper: get current syllabus
+function getSyl(sub){ return SYLLABUS[curClass][sub]; }
 
 // SYNC
 function setSyncState(s){
@@ -628,11 +778,17 @@ async function loadData(){
   setSyncState('loading');
   try{
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000); // 6 second timeout
+    const timeout = setTimeout(() => controller.abort(), 4000); // 4 second timeout
     const r=await fetch(`${GS}?action=readData&email=${encodeURIComponent(currentUser.email)}`, {signal: controller.signal});
     clearTimeout(timeout);
     const j=await r.json();
-    if(j.success&&j.data){cache.sessions=j.data.sessions||{};cache.completed=j.data.completed||{};}
+    if(j.success&&j.data){
+      cache.sessions=j.data.sessions||{};
+      cache.completed=j.data.completed||{};
+      // Re-render after fresh data loads
+      renderMonthGrid();
+      updateStats();
+    }
     setSyncState('synced');
   }catch(e){
     // Fallback to localStorage instantly
@@ -647,7 +803,7 @@ async function saveData(){
   localStorage.setItem('np_s_'+currentUser.email,JSON.stringify(cache.sessions));
   localStorage.setItem('np_c_'+currentUser.email,JSON.stringify(cache.completed));
   try{
-    await fetch(GS,{method:'POST',body:JSON.stringify({action:'saveData',email:currentUser.email,data:{sessions:cache.sessions,completed:cache.completed,progress:getProgressAll()}})});
+    await fetch(GS,{method:'POST',body:JSON.stringify({action:'saveData',email:currentUser.email,data:{sessions:cache.sessions,completed:cache.completed,progress:getAllProgress()}})});
     setSyncState('synced');
   }catch(e){setSyncState('error');}
 }
@@ -657,9 +813,25 @@ function scheduleSave(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeou
 function getProgressAll(){
   const out={};
   ['physics','chemistry','biology'].forEach(sub=>{
-    const total=SYLLABUS[sub].reduce((s,u)=>s+u.chapters.length,0);
-    const done=SYLLABUS[sub].reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${sub}_ch_${ch.name}`]).length,0);
+    const syl=getSyl(sub);
+    const total=syl.reduce((s,u)=>s+u.chapters.length,0);
+    const done=syl.reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${curClass}_${sub}_ch_${ch.name}`]).length,0);
     out[sub]=total?Math.round(done/total*100):0;
+  });
+  return out;
+}
+
+function getAllProgress(){
+  // Save progress for both classes
+  const out={};
+  ['class11','class12'].forEach(cls=>{
+    out[cls]={};
+    ['physics','chemistry','biology'].forEach(sub=>{
+      const syl=SYLLABUS[cls][sub];
+      const total=syl.reduce((s,u)=>s+u.chapters.length,0);
+      const done=syl.reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${cls}_${sub}_ch_${ch.name}`]).length,0);
+      out[cls][sub]=total?Math.round(done/total*100):0;
+    });
   });
   return out;
 }
@@ -807,7 +979,8 @@ async function enterApp(){
   document.getElementById('authPage').classList.remove('active');
   document.getElementById('loadingOverlay').style.display='none';
   document.getElementById('appShell').style.display='block';
-  // Set current academic year based on today's date
+  // Restore class preference
+  curClass = sessionStorage.getItem('np_class') || 'class12';
   const now=new Date();
   const mo=now.getMonth(); // 0=Jan
   curAY = mo>=3 ? now.getFullYear() : now.getFullYear()-1; // April+ = new AY
@@ -827,8 +1000,8 @@ async function enterApp(){
   cache.sessions=JSON.parse(localStorage.getItem('np_s_'+currentUser.email)||'{}');
   cache.completed=JSON.parse(localStorage.getItem('np_c_'+currentUser.email)||'{}');
   showHome();
-  // Load fresh data from Sheets in background
-  loadData().then(()=>{ renderMonthGrid(); updateStats(); });
+  // Load fresh data from Sheets in background (re-renders automatically)
+  loadData();
 }
 
 // NAVIGATION
@@ -859,13 +1032,22 @@ function setNavActive(id){document.querySelectorAll('.nav-btn').forEach(b=>b.cla
 function showHome(back=false){
   if(!back)navStack=[];
   setNavActive('navHome');
+  updateClassBtns();
   populateAYSelect();
   renderMonthGrid();
   updateStats();
   showPage('homePage');
   updateBackBtn();updateBC();
 }
-function showSyllabus(){navStack=[];setNavActive('navSyl');unitExp={};topicExp={};renderSyllabus(curSub);showPage('sylPage');updateBackBtn();updateBC();}
+function showSyllabus(){
+  navStack=[];
+  setNavActive('navSyl');
+  unitExp={};topicExp={};
+  updateClassBtns();
+  renderSyllabus(curSub);
+  showPage('sylPage');
+  updateBackBtn();updateBC();
+}
 function showAdmin(){navStack=[];setNavActive('navAdmin');loadAdminData();showPage('adminPage');updateBackBtn();updateBC();}
 
 // ACADEMIC YEAR CONTROLS
@@ -1007,6 +1189,8 @@ function openModal(h){
   es.innerHTML=Array.from({length:24},(_,i)=>`<option value="${i}"${i===(h+1<24?h+1:h)?' selected':''}>${HOURS[i]}</option>`).join('');
   document.getElementById('mSubject').value='';
   document.getElementById('mTopic').innerHTML='<option value="">Select subject first…</option>';
+  // Update modal title to show class
+  document.querySelector('#sessionOverlay .modal-title').textContent=`Add Session · ${curClass==='class11'?'Class 11':'Class 12'}`;
   document.getElementById('sessionOverlay').classList.add('open');
 }
 function closeModal(){document.getElementById('sessionOverlay').classList.remove('open');}
@@ -1015,7 +1199,7 @@ function populateTopics(){
   const sub=document.getElementById('mSubject').value,sel=document.getElementById('mTopic');
   if(!sub){sel.innerHTML='<option value="">Select subject first…</option>';return;}
   sel.innerHTML='<option value="">Select chapter/topic…</option>';
-  SYLLABUS[sub].forEach(unit=>{
+  getSyl(sub).forEach(unit=>{
     const og=document.createElement('optgroup');og.label=unit.unit;
     unit.chapters.forEach(ch=>{
       const o=document.createElement('option');o.value=ch.name;o.textContent=ch.name;og.appendChild(o);
@@ -1040,6 +1224,35 @@ function saveSession(){
   scheduleSave();closeModal();renderTimetable(curMonth,curDay);renderDayGrid(curMonth);
 }
 
+function switchClass(cls){
+  curClass = cls;
+  sessionStorage.setItem('np_class', cls);
+  updateClassBtns();
+  updateStats();
+  renderMonthGrid();
+}
+
+function switchClassSyl(cls){
+  curClass = cls;
+  sessionStorage.setItem('np_class', cls);
+  updateClassBtns();
+  unitExp = {}; topicExp = {};
+  renderSyllabus(curSub);
+}
+
+function updateClassBtns(){
+  // Home page buttons
+  const h11 = document.getElementById('cls11Btn');
+  const h12 = document.getElementById('cls12Btn');
+  if(h11){ h11.classList.toggle('active', curClass==='class11'); }
+  if(h12){ h12.classList.toggle('active', curClass==='class12'); }
+  // Syllabus page buttons
+  const s11 = document.getElementById('sylCls11Btn');
+  const s12 = document.getElementById('sylCls12Btn');
+  if(s11){ s11.classList.toggle('active', curClass==='class11'); }
+  if(s12){ s12.classList.toggle('active', curClass==='class12'); }
+}
+
 // SYLLABUS
 function switchSub(sub){
   curSub=sub;document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
@@ -1049,15 +1262,17 @@ function switchSub(sub){
 
 function renderSyllabus(sub){
   const wrap=document.getElementById('sylWrap');wrap.innerHTML='';
-  const total=SYLLABUS[sub].reduce((s,u)=>s+u.chapters.length,0);
-  const done=SYLLABUS[sub].reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${sub}_ch_${ch.name}`]).length,0);
+  const syl=getSyl(sub);
+  const total=syl.reduce((s,u)=>s+u.chapters.length,0);
+  const done=syl.reduce((s,u)=>s+u.chapters.filter(ch=>cache.completed[`${curClass}_${sub}_ch_${ch.name}`]).length,0);
   const pct=total?Math.round(done/total*100):0;
   const bar=document.getElementById('progBar');bar.className=`prog-bar ${sub}`;bar.style.width=pct+'%';
   document.getElementById('progTxt').textContent=`${done} of ${total} chapters`;
   document.getElementById('progPct').textContent=pct+'%';
 
-  SYLLABUS[sub].forEach((unit,ui)=>{
-    const unitDone=unit.chapters.filter(ch=>cache.completed[`${sub}_ch_${ch.name}`]).length;
+  syl.forEach((unit,ui)=>{
+    const chKey=(ch)=>`${curClass}_${sub}_ch_${ch.name}`;
+    const unitDone=unit.chapters.filter(ch=>cache.completed[chKey(ch)]).length;
     const block=document.createElement('div');block.className='unit-block';
     const hdr=document.createElement('div');hdr.className='unit-hdr';
     hdr.innerHTML=`<div class="unit-hdr-left"><span class="unit-hdr-name">${unit.unit}</span><span class="unit-cnt ${sub}">${unitDone}/${unit.chapters.length}</span></div><span class="unit-chev${unitExp[ui]?' open':''}">▼</span>`;
@@ -1065,22 +1280,22 @@ function renderSyllabus(sub){
     block.appendChild(hdr);
     const body=document.createElement('div');body.className='unit-body'+(unitExp[ui]?' open':'');
     unit.chapters.forEach((ch,ci)=>{
-      const chKey=`${sub}_ch_${ch.name}`;const isDone=!!cache.completed[chKey];
+      const ck=chKey(ch);const isDone=!!cache.completed[ck];
       const item=document.createElement('div');item.className='ch-item';
       const chk=document.createElement('div');chk.className=`ch-check${isDone?' done '+sub:''}`;
-      chk.onclick=e=>{e.stopPropagation();cache.completed[chKey]=!cache.completed[chKey];scheduleSave();renderSyllabus(sub);updateStats();};
+      chk.onclick=e=>{e.stopPropagation();cache.completed[ck]=!cache.completed[ck];scheduleSave();renderSyllabus(sub);updateStats();};
       item.appendChild(chk);
       const info=document.createElement('div');info.className='ch-info';
       const nm=document.createElement('div');nm.className=`ch-name${isDone?' done':''}`;nm.textContent=ch.name;info.appendChild(nm);
       if(ch.topics&&ch.topics.length){
-        const tkey=`${sub}_${ui}_${ci}`;
+        const tkey=`${curClass}_${sub}_${ui}_${ci}`;
         const tbtn=document.createElement('button');tbtn.className='topics-toggle-btn';
         const tlist=document.createElement('div');tlist.className='topics-list'+(topicExp[tkey]?' open':'');
         tbtn.textContent=topicExp[tkey]?'▲ Hide topics':`▼ Show ${ch.topics.length} topics`;
         tbtn.onclick=e=>{e.stopPropagation();topicExp[tkey]=!topicExp[tkey];tlist.classList.toggle('open',topicExp[tkey]);tbtn.textContent=topicExp[tkey]?'▲ Hide topics':`▼ Show ${ch.topics.length} topics`;};
         info.appendChild(tbtn);
         ch.topics.forEach(t=>{
-          const tk=`${sub}_topic_${t}`;const tdone=!!cache.completed[tk];
+          const tk=`${curClass}_${sub}_topic_${t}`;const tdone=!!cache.completed[tk];
           const tr=document.createElement('div');tr.className='topic-row';
           const tc=document.createElement('div');tc.className=`topic-check${tdone?' done '+sub:''}`;
           tc.onclick=e=>{e.stopPropagation();cache.completed[tk]=!cache.completed[tk];scheduleSave();renderSyllabus(sub);};
@@ -1133,22 +1348,24 @@ async function loadAdminData(){
 }
 
 // INIT
-window.addEventListener('DOMContentLoaded',async()=>{
-  const saved=sessionStorage.getItem('np_user');
+window.addEventListener('DOMContentLoaded', () => {
+  // Hide loading overlay IMMEDIATELY — never block on network
+  document.getElementById('loadingOverlay').style.display = 'none';
+
+  const saved = sessionStorage.getItem('np_user');
   if(saved){
     try{
-      currentUser=JSON.parse(saved);
-      await enterApp();
-    }catch(e){
+      currentUser = JSON.parse(saved);
+      enterApp(); // not awaited — enterApp is synchronous for display, async for data
+    } catch(e){
       sessionStorage.removeItem('np_user');
-      document.getElementById('loadingOverlay').style.display='none';
       document.getElementById('authPage').classList.add('active');
+      document.getElementById('loginEmail').focus();
     }
   } else {
-    document.getElementById('loadingOverlay').style.display='none';
     document.getElementById('authPage').classList.add('active');
     setTimeout(()=>{
-      if(typeof google!=='undefined'){
+      if(typeof google !== 'undefined'){
         google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: handleGoogleResponse,
@@ -1156,8 +1373,9 @@ window.addEventListener('DOMContentLoaded',async()=>{
           cancel_on_tap_outside: true
         });
       }
-      document.getElementById('loginEmail').focus();
-    }, 800);
+      const emailEl = document.getElementById('loginEmail');
+      if(emailEl) emailEl.focus();
+    }, 500);
   }
 });
 </script>
